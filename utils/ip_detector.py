@@ -119,6 +119,93 @@ class IPValidator:
             return False
 
 
+class ThreatIntelligenceLookup:
+    """Enhanced threat intelligence from multiple sources."""
+    
+    # Reputation APIs
+    REPUTATION_APIS = {
+        'abuseipdb-free': 'https://api.abuseipdb.com/api/v2/check',  # Requires API key
+        'otx': 'https://otx.alienvault.com/api/v1/pulses/subscribed',  # Requires API key
+        'ip-quality-score': 'https://ipqualityscore.com/api/json/ip',  # Free tier available
+    }
+    
+    # Known malicious IPs and patterns (local database for demo/testing)
+    KNOWN_MALICIOUS = {
+        '185.220.101.42': {'name': 'Tor Exit Node', 'threat_level': 'high', 'reasons': ['Tor Exit', 'Proxy']},
+        '45.33.32.156': {'name': 'Linode Abuse Source', 'threat_level': 'medium', 'reasons': ['Historical abuse', 'Port scanning']},
+        '89.248.165.12': {'name': 'VPN/Proxy Provider', 'threat_level': 'medium', 'reasons': ['Proxy service', 'Anonymization']},
+        '192.241.238.16': {'name': 'Botnet C&C', 'threat_level': 'critical', 'reasons': ['Known botnet', 'Malware C&C']},
+        '104.21.45.76': {'name': 'DDoS Source', 'threat_level': 'high', 'reasons': ['DDoS attacks', 'Amplification']},
+        '1.1.1.1': {'name': 'Cloudflare DNS', 'threat_level': 'none', 'reasons': ['Trusted service']},
+        '8.8.8.8': {'name': 'Google DNS', 'threat_level': 'none', 'reasons': ['Trusted service']},
+        '1.0.0.1': {'name': 'Cloudflare DNS', 'threat_level': 'none', 'reasons': ['Trusted service']},
+    }
+    
+    def __init__(self, timeout: int = 10):
+        self.timeout = timeout
+        self.session = requests.Session()
+    
+    def check_reputation(self, ip: str) -> Dict[str, Any]:
+        """Check IP reputation from known database."""
+        if ip in self.KNOWN_MALICIOUS:
+            info = self.KNOWN_MALICIOUS[ip]
+            return {
+                'found': True,
+                'name': info['name'],
+                'threat_level': info['threat_level'],
+                'reasons': info['reasons'],
+                'source': 'local_database'
+            }
+        
+        # Try free IP quality score API
+        try:
+            return self._check_ip_quality_score(ip)
+        except Exception:
+            pass
+        
+        return {'found': False, 'source': 'none'}
+    
+    def _check_ip_quality_score(self, ip: str) -> Dict[str, Any]:
+        """Free tier check from IP Quality Score."""
+        try:
+            url = f'https://ipqualityscore.com/api/json/ip/{ip}'
+            params = {'strictness': 1}
+            response = self.session.get(url, params=params, timeout=self.timeout)
+            response.raise_for_status()
+            data = response.json()
+            
+            if data.get('fraud_score', 0) >= 75:
+                threat_level = 'critical'
+            elif data.get('fraud_score', 0) >= 50:
+                threat_level = 'high'
+            elif data.get('fraud_score', 0) >= 25:
+                threat_level = 'medium'
+            else:
+                threat_level = 'low'
+            
+            reasons = []
+            if data.get('is_bot'):
+                reasons.append('Bot detected')
+            if data.get('is_vpn'):
+                reasons.append('VPN/Proxy')
+            if data.get('is_proxy'):
+                reasons.append('Proxy detected')
+            if data.get('recent_abuse'):
+                reasons.append('Recent abuse')
+            
+            return {
+                'found': True,
+                'name': f"IP Quality Score Analysis",
+                'threat_level': threat_level,
+                'fraud_score': data.get('fraud_score', 0),
+                'reasons': reasons or ['See reputation analysis'],
+                'source': 'ipqualityscore'
+            }
+        except Exception as e:
+            logger.debug(f"IP Quality Score lookup failed: {e}")
+            return {'found': False, 'source': 'ipqualityscore', 'error': str(e)}
+
+
 class IPGeolocation:
     """Geolocation lookup for IP addresses."""
     
@@ -512,6 +599,7 @@ class IPAnalyzer:
         self.validator = IPValidator()
         self.geolocation = IPGeolocation()
         self.realtime_model = RealtimeIPRiskModel()
+        self.threat_intel = ThreatIntelligenceLookup()
     
     def analyze(self, ip: str) -> Dict[str, Any]:
         """
@@ -537,21 +625,103 @@ class IPAnalyzer:
             'geolocation': self.geolocation.lookup(ip) if self.validator.is_valid_ipv4(ip) else {},
             'classification': self._classify_ip(ip),
             'reverse_lookup': self._reverse_lookup(ip),
+            'threat_intelligence': self.threat_intel.check_reputation(ip),  # NEW: Threat intel lookup
         }
 
         analysis['attack_assessment'] = self._assess_attack_history(
             ip,
             geolocation=analysis['geolocation'],
-            reverse_lookup=analysis['reverse_lookup']
+            reverse_lookup=analysis['reverse_lookup'],
+            threat_intel=analysis['threat_intelligence']  # Pass threat intel data
         )
         
+        # NEW: Add a comprehensive threat score
+        analysis['overall_threat_score'] = self._calculate_threat_score(analysis)
+        
         return analysis
+    
+    def _calculate_threat_score(self, analysis: Dict[str, Any]) -> Dict[str, Any]:
+        """Calculate overall threat score from all available data."""
+        score = 0.0
+        factors = []
+        
+        # Factor 1: Threat intelligence
+        threat_intel = analysis.get('threat_intelligence', {})
+        if threat_intel.get('found'):
+            threat_level = threat_intel.get('threat_level', 'none')
+            level_scores = {
+                'critical': 0.9,
+                'high': 0.75,
+                'medium': 0.5,
+                'low': 0.2,
+                'none': 0.0
+            }
+            intel_score = level_scores.get(threat_level, 0.0)
+            score += intel_score * 0.3  # 30% weight
+            factors.append(f"Threat Intelligence: {threat_level} ({int(intel_score*100)}%)")
+        
+        # Factor 2: Attack assessment
+        attack = analysis.get('attack_assessment', {})
+        if attack.get('available'):
+            total_alerts = attack.get('total_alert_count', 0)
+            if total_alerts > 0:
+                attack_score = min(0.9, 0.1 + (total_alerts * 0.05))
+                score += attack_score * 0.35  # 35% weight
+                factors.append(f"Attack History: {total_alerts} alerts ({int(attack_score*100)}%)")
+        
+        # Factor 3: Geolocation characteristics
+        geoloc = analysis.get('geolocation', {})
+        if not geoloc.get('error'):
+            geo_score = 0.0
+            if geoloc.get('proxy'):
+                geo_score += 0.2
+                factors.append("Proxy/VPN detected")
+            if geoloc.get('hosting'):
+                geo_score += 0.15
+                factors.append("Hosting provider")
+            if geoloc.get('mobile'):
+                geo_score += 0.05
+                factors.append("Mobile IP")
+            score += min(0.3, geo_score) * 0.2  # 20% weight
+        
+        # Factor 4: Classification
+        classif = analysis.get('classification', {})
+        if classif.get('risk_level') == 'medium':
+            score += 0.15 * 0.15  # 15% weight
+        
+        # Normalize to 0-100 scale
+        final_score = min(100, max(0, score * 100))
+        
+        # Determine risk level
+        if final_score >= 80:
+            risk_level = 'critical'
+            recommendation = 'BLOCK - Critical threat detected'
+        elif final_score >= 60:
+            risk_level = 'high'
+            recommendation = 'ALERT - High risk IP'
+        elif final_score >= 40:
+            risk_level = 'medium'
+            recommendation = 'MONITOR - Medium risk IP'
+        elif final_score >= 20:
+            risk_level = 'low'
+            recommendation = 'ALLOW - Low risk IP'
+        else:
+            risk_level = 'safe'
+            recommendation = 'TRUSTED - Safe IP'
+        
+        return {
+            'score': round(final_score, 2),
+            'risk_level': risk_level,
+            'recommendation': recommendation,
+            'factors': factors,
+        }
 
     def _assess_attack_history(
         self,
         ip: str,
         geolocation: Optional[Dict[str, Any]] = None,
-        reverse_lookup: Optional[Dict[str, Any]] = None
+        reverse_lookup: Optional[Dict[str, Any]] = None,
+        threat_intel: Optional[Dict[str, Any]] = None
     ) -> Dict[str, Any]:
         """Look up whether the IP has been involved in recorded attacks."""
         try:
