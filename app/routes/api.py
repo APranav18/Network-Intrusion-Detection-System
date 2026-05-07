@@ -777,6 +777,15 @@ def global_search():
             'url': f'/alerts?ip={query}',
             'severity': 'info'
         })
+        results.insert(0, {
+            'id': 'ip-analyze',
+            'type': 'action',
+            'icon': 'shield-check',
+            'title': f'Analyze IP {query}',
+            'subtitle': 'Open IP Detection and run a live analysis for this address',
+            'url': f'/ip-detection/?ip={query}',
+            'severity': 'info'
+        })
     
     return jsonify(results[:15])  # Limit to 15 results
 

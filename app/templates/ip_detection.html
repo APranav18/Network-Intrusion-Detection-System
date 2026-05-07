@@ -646,6 +646,15 @@ document.addEventListener('DOMContentLoaded', function() {
     loadLiveIPAlerts();
     setInterval(loadLiveIPAlerts, 5000);
 
+    const ipFromUrl = new URLSearchParams(window.location.search).get('ip');
+    if (ipFromUrl) {
+        const ipInput = document.getElementById('ipInput');
+        if (ipInput) {
+            ipInput.value = ipFromUrl;
+            setTimeout(() => analyzeSingleIP(), 250);
+        }
+    }
+
     // Single IP Analysis
     document.getElementById('singleIPForm').addEventListener('submit', (e) => {
         e.preventDefault();
@@ -836,6 +845,11 @@ document.addEventListener('DOMContentLoaded', function() {
         const geolocation = data.geolocation || {};
         const reverseLookup = data.reverse_lookup || {};
         const attackAssessment = data.attack_assessment || {};
+        const threatIntel = data.threat_intelligence || {};
+        const threatScore = data.overall_threat_score || {};
+        const threatVerdict = threatScore.recommendation || attackAssessment.status_label || 'Analysis completed';
+        const threatRisk = threatScore.risk_level || attackAssessment.status || 'unknown';
+        const threatScoreValue = Number.isFinite(Number(threatScore.score)) ? Number(threatScore.score) : null;
 
         const typeClass = validation.is_private ? 'private' : 
                          validation.is_reserved ? 'reserved' : 'public';
@@ -845,6 +859,7 @@ document.addEventListener('DOMContentLoaded', function() {
                                 attackStatus === 'watchlist' ? 'info' : 'success';
         const attackLabel = attackAssessment.status_label || 'No known attack';
         const attackTypes = (attackAssessment.attack_types || []).slice(0, 3).map(item => item.attack_type).join(', ') || 'None recorded';
+        const threatIntelLabel = threatIntel.found ? `${threatIntel.name || 'Known reputation'}${threatIntel.source ? ` (${threatIntel.source})` : ''}` : 'No known reputation hit';
 
         resultsRow.innerHTML = `
             <div class="col-lg-6 mb-3">
@@ -857,6 +872,24 @@ document.addEventListener('DOMContentLoaded', function() {
                             <strong>Version:</strong> ${validation.version}<br>
                             <strong>IPv4:</strong> ${validation.is_ipv4 ? '✓' : '✗'}<br>
                             <strong>IPv6:</strong> ${validation.is_ipv6 ? '✓' : '✗'}
+                        </small>
+                    </div>
+                </div>
+            </div>
+
+            <div class="col-lg-6 mb-3">
+                <div class="card border-${threatRisk === 'critical' ? 'danger' : threatRisk === 'high' ? 'warning' : threatRisk === 'medium' ? 'info' : 'success'}">
+                    <div class="card-header bg-${threatRisk === 'critical' ? 'danger' : threatRisk === 'high' ? 'warning' : threatRisk === 'medium' ? 'info' : 'success'} text-white">
+                        <h6 class="mb-0">🧠 AI Detection Verdict</h6>
+                    </div>
+                    <div class="card-body">
+                        <span class="badge bg-${threatRisk === 'critical' ? 'danger' : threatRisk === 'high' ? 'warning' : threatRisk === 'medium' ? 'info' : 'success'} text-dark mb-2">${threatVerdict}</span>
+                        <small class="d-block">
+                            <strong>Risk level:</strong> ${threatRisk}<br>
+                            <strong>Threat score:</strong> ${threatScoreValue !== null ? `${threatScoreValue.toFixed(2)} / 100` : 'N/A'}<br>
+                            <strong>Recommendation:</strong> ${threatVerdict}<br>
+                            <strong>Threat intel:</strong> ${threatIntelLabel}<br>
+                            <strong>Factors:</strong> ${(threatScore.factors || []).length ? threatScore.factors.join(', ') : 'IP analyzed using geolocation, DNS, and history signals'}
                         </small>
                     </div>
                 </div>
