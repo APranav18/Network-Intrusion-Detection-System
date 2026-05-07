@@ -1,0 +1,726 @@
+{% extends "base.html" %}
+
+{% block title %}Performance Monitoring - AI-NIDS{% endblock %}
+
+{% block content %}
+<div class="container-fluid mt-4">
+    <!-- Header -->
+    <div class="row mb-4">
+        <div class="col-md-12">
+            <h1 class="display-5 mb-2">
+                <i class="fas fa-tachometer-alt text-primary"></i>
+                Performance Monitoring
+            </h1>
+            <p class="text-muted">Monitor web application performance using Google PageSpeed Insights</p>
+        </div>
+    </div>
+
+    <!-- Main Analysis Section -->
+    <div class="row mb-4">
+        <div class="col-lg-8">
+            <div class="card shadow-sm">
+                <div class="card-header bg-primary text-white">
+                    <h5 class="mb-0"><i class="fas fa-globe"></i> Analyze Performance</h5>
+                </div>
+                <div class="card-body">
+                    <form id="performanceForm">
+                        <div class="form-group mb-3">
+                            <label for="urlInput" class="form-label fw-bold">Website URL</label>
+                            <input 
+                                type="url" 
+                                class="form-control form-control-lg" 
+                                id="urlInput" 
+                                placeholder="https://example.com or example.com"
+                                required
+                            >
+                            <small class="text-muted d-block mt-2">
+                                <i class="fas fa-info-circle"></i> 
+                                Note: Public URLs only. Localhost requires external tunnel (ngrok)
+                            </small>
+                        </div>
+
+                        <div class="form-row mb-3">
+                            <div class="form-group col-md-6">
+                                <label for="strategySelect" class="form-label fw-bold">Analysis Strategy</label>
+                                <select class="form-select form-select-lg" id="strategySelect">
+                                    <option value="mobile" selected>📱 Mobile</option>
+                                    <option value="desktop">🖥️ Desktop</option>
+                                </select>
+                            </div>
+                            <div class="form-group col-md-6">
+                                <label for="cacheToggle" class="form-label fw-bold">Use Cache</label>
+                                <div class="form-check form-switch pt-3">
+                                    <input 
+                                        class="form-check-input" 
+                                        type="checkbox" 
+                                        id="cacheToggle" 
+                                        checked
+                                    >
+                                    <label class="form-check-label" for="cacheToggle">
+                                        Cache results for 1 hour
+                                    </label>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="d-grid gap-2 d-md-flex">
+                            <button type="submit" class="btn btn-primary btn-lg flex-grow-1">
+                                <i class="fas fa-play"></i> Analyze Single
+                            </button>
+                            <button type="button" class="btn btn-info btn-lg flex-grow-1" id="analyzeBothBtn">
+                                <i class="fas fa-copy"></i> Analyze Both (Mobile + Desktop)
+                            </button>
+                        </div>
+                    </form>
+
+                    <!-- Loading Spinner -->
+                    <div id="loadingSpinner" class="mt-4 text-center d-none">
+                        <div class="spinner-border text-primary" role="status">
+                            <span class="visually-hidden">Analyzing...</span>
+                        </div>
+                        <p class="mt-2 text-muted">Analyzing performance... This may take 30-60 seconds</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Quick Info Panel -->
+        <div class="col-lg-4">
+            <div class="card shadow-sm bg-light mb-3">
+                <div class="card-header">
+                    <h5 class="mb-0"><i class="fas fa-lightbulb"></i> Web Vitals Overview</h5>
+                </div>
+                <div class="card-body small">
+                    <div class="mb-3">
+                        <strong>LCP - Largest Contentful Paint</strong>
+                        <p class="text-muted mb-1">Good: &lt; 2.5s</p>
+                        <p class="mb-0">How fast main content loads</p>
+                    </div>
+                    <hr/>
+                    <div class="mb-3">
+                        <strong>FID - First Input Delay</strong>
+                        <p class="text-muted mb-1">Good: &lt; 100ms</p>
+                        <p class="mb-0">Responsiveness to user input</p>
+                    </div>
+                    <hr/>
+                    <div>
+                        <strong>CLS - Cumulative Layout Shift</strong>
+                        <p class="text-muted mb-1">Good: &lt; 0.1</p>
+                        <p class="mb-0">Visual stability of the page</p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- API Key Info -->
+            <div class="card shadow-sm bg-info text-white">
+                <div class="card-header">
+                    <h5 class="mb-0"><i class="fas fa-key"></i> Google API Key</h5>
+                </div>
+                <div class="card-body small">
+                    <p class="mb-2">To increase analysis limits, set your Google PageSpeed Insights API key:</p>
+                    <code class="text-light">export GOOGLE_PAGESPEED_API_KEY="your-api-key"</code>
+                    <p class="mt-2 mb-0">
+                        <a href="https://developers.google.com/speed/docs/insights/v5/get-started" 
+                           target="_blank" class="text-white text-decoration-underline">
+                            Get API Key →
+                        </a>
+                    </p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Results Section -->
+    <div id="resultsSection" class="d-none">
+        <div id="resultsHeader" class="mb-3"></div>
+
+        <!-- Score Cards -->
+        <div class="row mb-4" id="scoreCards"></div>
+
+        <!-- Category Bars -->
+        <div class="row mb-4">
+            <div class="col-lg-12">
+                <div class="card shadow-sm">
+                    <div class="card-header">
+                        <h5 class="mb-0"><i class="fas fa-chart-bar"></i> Category Score Breakdown</h5>
+                    </div>
+                    <div class="card-body" id="categoryBars"></div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Core Web Vitals -->
+        <div class="row mb-4">
+            <div class="col-lg-12">
+                <div class="card shadow-sm">
+                    <div class="card-header">
+                        <h5 class="mb-0"><i class="fas fa-chart-line"></i> Core Web Vitals</h5>
+                    </div>
+                    <div class="card-body">
+                        <div class="row" id="webVitalsRow"></div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Performance Metrics -->
+        <div class="row mb-4">
+            <div class="col-lg-12">
+                <div class="card shadow-sm">
+                    <div class="card-header">
+                        <h5 class="mb-0"><i class="fas fa-tachometer-alt"></i> Performance Metrics</h5>
+                    </div>
+                    <div class="card-body">
+                        <div id="metricsTable"></div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Opportunities -->
+        <div class="row mb-4">
+            <div class="col-lg-12">
+                <div class="card shadow-sm">
+                    <div class="card-header">
+                        <h5 class="mb-0"><i class="fas fa-star"></i> Top Optimization Opportunities</h5>
+                    </div>
+                    <div class="card-body">
+                        <div id="opportunitiesList"></div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Real User Field Data -->
+        <div class="row mb-4">
+            <div class="col-lg-12">
+                <div class="card shadow-sm">
+                    <div class="card-header">
+                        <h5 class="mb-0"><i class="fas fa-users"></i> Real User Field Data (CrUX)</h5>
+                    </div>
+                    <div class="card-body" id="fieldDataRow"></div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Metadata -->
+        <div class="row">
+            <div class="col-lg-12">
+                <small class="text-muted">
+                    <i class="fas fa-clock"></i>
+                    Analysis completed: <span id="analysisTime"></span>
+                </small>
+                <div id="reportLinks" class="mt-2"></div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Error Alert -->
+    <div id="errorAlert" class="alert alert-danger alert-dismissible fade d-none" role="alert">
+        <strong>Analysis Error:</strong>
+        <span id="errorMessage"></span>
+        <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+    </div>
+</div>
+
+<style>
+    .metric-card {
+        border-left: 4px solid;
+        padding: 1rem;
+        margin-bottom: 1rem;
+        border-radius: 0.25rem;
+    }
+
+    .metric-card.success {
+        border-left-color: #28a745;
+        background-color: #f0f9f5;
+    }
+
+    .metric-card.warning {
+        border-left-color: #ffc107;
+        background-color: #fffbf0;
+    }
+
+    .metric-card.danger {
+        border-left-color: #dc3545;
+        background-color: #fdf5f7;
+    }
+
+    .score-circle {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        border-radius: 50%;
+        width: 120px;
+        height: 120px;
+        font-size: 2.5rem;
+        font-weight: bold;
+        margin: 0 auto;
+    }
+
+    .score-circle.success {
+        background-color: #e8f5e9;
+        color: #27ae60;
+    }
+
+    .score-circle.warning {
+        background-color: #fff3e0;
+        color: #f39c12;
+    }
+
+    .score-circle.danger {
+        background-color: #ffebee;
+        color: #e74c3c;
+    }
+
+    .opportunity-item {
+        border-left: 3px solid #ffc107;
+        padding-left: 1rem;
+        margin-bottom: 1rem;
+        padding-bottom: 1rem;
+    }
+
+    .opportunity-item:last-child {
+        margin-bottom: 0;
+        padding-bottom: 0;
+    }
+
+    .vital-badge {
+        display: inline-block;
+        padding: 0.5rem 1rem;
+        border-radius: 0.25rem;
+        font-weight: 500;
+        margin-bottom: 0.5rem;
+    }
+
+    .vital-badge.good {
+        background-color: #e8f5e9;
+        color: #27ae60;
+    }
+
+    .vital-badge.needs-improvement {
+        background-color: #fff3e0;
+        color: #f39c12;
+    }
+
+    .vital-badge.poor {
+        background-color: #ffebee;
+        color: #e74c3c;
+    }
+
+    .score-progress {
+        height: 12px;
+    }
+
+    .field-card {
+        border-left: 4px solid #6c757d;
+        border-radius: 0.25rem;
+        padding: 0.9rem;
+        background: #fafafa;
+        margin-bottom: 0.8rem;
+    }
+
+    .field-card.good {
+        border-left-color: #28a745;
+    }
+
+    .field-card.needs-improvement {
+        border-left-color: #ffc107;
+    }
+
+    .field-card.poor {
+        border-left-color: #dc3545;
+    }
+</style>
+
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    const form = document.getElementById('performanceForm');
+    const urlInput = document.getElementById('urlInput');
+    const strategySelect = document.getElementById('strategySelect');
+    const cacheToggle = document.getElementById('cacheToggle');
+    const analyzeBothBtn = document.getElementById('analyzeBothBtn');
+    const loadingSpinner = document.getElementById('loadingSpinner');
+    const resultsSection = document.getElementById('resultsSection');
+    const errorAlert = document.getElementById('errorAlert');
+
+    form.addEventListener('submit', (e) => {
+        e.preventDefault();
+        analyzePerformance(false);
+    });
+
+    analyzeBothBtn.addEventListener('click', () => {
+        analyzePerformance(true);
+    });
+
+    function analyzePerformance(analyzeBoth) {
+        const url = urlInput.value.trim();
+        if (!url) return;
+
+        loadingSpinner.classList.remove('d-none');
+        resultsSection.classList.add('d-none');
+        errorAlert.classList.add('d-none');
+
+        const endpoint = analyzeBoth ? '/performance/analyze-both' : '/performance/analyze';
+        const payload = {
+            url: url,
+            strategy: analyzeBoth ? 'mobile' : strategySelect.value,
+            use_cache: cacheToggle.checked
+        };
+
+        fetch(endpoint, {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify(payload)
+        })
+        .then(response => response.json())
+        .then(data => {
+            loadingSpinner.classList.add('d-none');
+            
+            if (data.error) {
+                showError(data.error);
+            } else if (analyzeBoth) {
+                displayDualResults(data);
+            } else {
+                displayResults(data);
+            }
+        })
+        .catch(error => {
+            loadingSpinner.classList.add('d-none');
+            showError('Network error: ' + error.message);
+        });
+    }
+
+    function displayResults(data) {
+        if (!data.success) {
+            showError(data.error || 'Analysis failed');
+            return;
+        }
+
+        document.getElementById('resultsHeader').innerHTML = `
+            <div class="alert alert-primary mb-0">
+                <strong>${data.strategy.toUpperCase()}</strong> strategy for
+                <span class="ms-1">${data.url}</span>
+            </div>
+        `;
+
+        resultsSection.classList.remove('d-none');
+        
+        // Display scores
+        const scores = data.scores || {};
+        const scoreCards = document.getElementById('scoreCards');
+        scoreCards.innerHTML = '';
+
+        for (const [category, score] of Object.entries(scores)) {
+            const color = getScoreColor(score);
+            const grade = getScoreGrade(score);
+            
+            scoreCards.innerHTML += `
+                <div class="col-md-3 mb-3">
+                    <div class="card shadow-sm">
+                        <div class="card-body text-center">
+                            <h6 class="card-title text-capitalize">${category}</h6>
+                            <div class="score-circle ${color}">${Math.round(score)}</div>
+                            <p class="text-muted mb-0 mt-2">Grade: <strong>${grade}</strong></p>
+                        </div>
+                    </div>
+                </div>
+            `;
+        }
+
+        const categoryBars = document.getElementById('categoryBars');
+        const scoreDetails = data.score_details || [];
+        categoryBars.innerHTML = scoreDetails.map(item => {
+            const scoreValue = Math.round(item.score || 0);
+            const color = getScoreColor(item.score || 0);
+            const barClass = color === 'success' ? 'bg-success' : (color === 'warning' ? 'bg-warning' : 'bg-danger');
+            return `
+                <div class="mb-3">
+                    <div class="d-flex justify-content-between">
+                        <span>${item.title}</span>
+                        <strong>${scoreValue}</strong>
+                    </div>
+                    <div class="progress score-progress">
+                        <div class="progress-bar ${barClass}" role="progressbar" style="width: ${scoreValue}%"></div>
+                    </div>
+                </div>
+            `;
+        }).join('') || '<p class="text-muted mb-0">No category data available.</p>';
+
+        // Display Web Vitals
+        const metrics = data.metrics || {};
+        const vitalNames = ['lcp', 'fid', 'cls'];
+        const webVitalsRow = document.getElementById('webVitalsRow');
+        webVitalsRow.innerHTML = '';
+
+        vitalNames.forEach(vital => {
+            if (metrics[vital]) {
+                const m = metrics[vital];
+                const rating = m.rating || 'unknown';
+                const badgeClass = rating === 'good' ? 'good' : rating === 'needs-improvement' ? 'needs-improvement' : 'poor';
+                
+                webVitalsRow.innerHTML += `
+                    <div class="col-md-4 mb-3">
+                        <div class="metric-card ${badgeClass}">
+                            <h6 class="mb-2">${vital.toUpperCase()}</h6>
+                            <p class="mb-1">
+                                <strong>${m.displayValue}</strong>
+                            </p>
+                            <small class="text-muted">
+                                <span class="vital-badge ${badgeClass}">${rating.replace('-', ' ').toUpperCase()}</span>
+                            </small>
+                        </div>
+                    </div>
+                `;
+            }
+        });
+
+        // Display other metrics
+        const metricsTable = document.getElementById('metricsTable');
+        metricsTable.innerHTML = '';
+        
+        const otherMetrics = ['first-contentful-paint', 'speed-index', 'total-blocking-time', 'cumulative-layout-shift'];
+        let html = '<div class="row">';
+        
+        otherMetrics.forEach((metric, idx) => {
+            if (metrics[metric]) {
+                const m = metrics[metric];
+                html += `
+                    <div class="col-md-6 mb-2">
+                        <div class="metric-card">
+                            <strong>${formatMetricName(metric)}</strong><br/>
+                            <span class="h5">${m.displayValue}</span>
+                        </div>
+                    </div>
+                `;
+            }
+        });
+        
+        html += '</div>';
+        metricsTable.innerHTML = html;
+
+        // Display opportunities
+        const opportunities = data.opportunities || [];
+        const opportunitiesList = document.getElementById('opportunitiesList');
+        opportunitiesList.innerHTML = '';
+
+        if (opportunities.length === 0) {
+            opportunitiesList.innerHTML = '<p class="text-success"><i class="fas fa-check-circle"></i> No major opportunities detected!</p>';
+        } else {
+            opportunities.forEach(opp => {
+                opportunitiesList.innerHTML += `
+                    <div class="opportunity-item">
+                        <h6 class="mb-1">${opp.title}</h6>
+                        <p class="text-muted small mb-2">${opp.description}</p>
+                        <span class="badge bg-warning">Potential savings: ${opp.savings}ms</span>
+                    </div>
+                `;
+            });
+        }
+
+        // Real-user field data (CrUX)
+        const fieldDataContainer = document.getElementById('fieldDataRow');
+        const fieldData = (data.field_data && data.field_data.metrics) ? data.field_data : null;
+
+        if (!fieldData || Object.keys(fieldData.metrics).length === 0) {
+            fieldDataContainer.innerHTML = '<p class="text-muted mb-0">No CrUX field data available for this URL yet.</p>';
+        } else {
+            const metricMap = {
+                'LARGEST_CONTENTFUL_PAINT_MS': 'LCP',
+                'FIRST_INPUT_DELAY_MS': 'FID',
+                'CUMULATIVE_LAYOUT_SHIFT_SCORE': 'CLS',
+                'INTERACTION_TO_NEXT_PAINT': 'INP'
+            };
+
+            fieldDataContainer.innerHTML = Object.entries(fieldData.metrics).map(([metricKey, metricValue]) => {
+                const rating = (metricValue.category || '').toLowerCase();
+                const label = metricMap[metricKey] || metricKey;
+                const percentile = metricValue.percentile;
+                return `
+                    <div class="field-card ${rating}">
+                        <div class="d-flex justify-content-between align-items-center">
+                            <strong>${label}</strong>
+                            <span class="badge bg-secondary">${(metricValue.category || 'N/A').toUpperCase()}</span>
+                        </div>
+                        <div class="mt-2">
+                            75th percentile: <strong>${formatFieldPercentile(metricKey, percentile)}</strong>
+                        </div>
+                    </div>
+                `;
+            }).join('');
+        }
+
+        // Official report link
+        const reportLinks = document.getElementById('reportLinks');
+        reportLinks.innerHTML = data.report_url ? `
+            <a href="${data.report_url}" target="_blank" class="btn btn-outline-primary btn-sm">
+                <i class="fas fa-external-link-alt"></i> Open Official PageSpeed Report
+            </a>
+        ` : '';
+
+        // Display timestamp
+        document.getElementById('analysisTime').textContent = new Date(data.timestamp).toLocaleString();
+    }
+
+    function displayDualResults(data) {
+        const mobile = data.mobile || {};
+        const desktop = data.desktop || {};
+
+        if (!mobile.success || !desktop.success) {
+            showError((mobile.error || desktop.error || 'Dual analysis failed'));
+            return;
+        }
+
+        resultsSection.classList.remove('d-none');
+        document.getElementById('resultsHeader').innerHTML = `
+            <div class="alert alert-info mb-0">
+                <strong>Dual Strategy Analysis</strong> for ${data.url}
+            </div>
+        `;
+
+        const scoreCards = document.getElementById('scoreCards');
+        const categoryBars = document.getElementById('categoryBars');
+        const webVitalsRow = document.getElementById('webVitalsRow');
+        const metricsTable = document.getElementById('metricsTable');
+        const opportunitiesList = document.getElementById('opportunitiesList');
+        const fieldDataRow = document.getElementById('fieldDataRow');
+        const reportLinks = document.getElementById('reportLinks');
+
+        const renderSummary = (label, result) => {
+            const performanceScore = Math.round((result.scores?.performance || 0));
+            return `
+                <div class="col-md-6 mb-3">
+                    <div class="card h-100">
+                        <div class="card-body text-center">
+                            <h6 class="text-uppercase text-muted">${label}</h6>
+                            <div class="score-circle ${getScoreColor(performanceScore)}">${performanceScore}</div>
+                            <div class="mt-2">Performance Grade: <strong>${getScoreGrade(performanceScore)}</strong></div>
+                        </div>
+                    </div>
+                </div>
+            `;
+        };
+
+        scoreCards.innerHTML = renderSummary('Mobile', mobile) + renderSummary('Desktop', desktop);
+
+        const renderCategoryBars = (label, result) => {
+            const bars = (result.score_details || []).map(item => {
+                const scoreValue = Math.round(item.score || 0);
+                const barClass = getScoreColor(scoreValue) === 'success' ? 'bg-success' : (getScoreColor(scoreValue) === 'warning' ? 'bg-warning' : 'bg-danger');
+                return `
+                    <div class="mb-2">
+                        <div class="d-flex justify-content-between small"><span>${item.title}</span><strong>${scoreValue}</strong></div>
+                        <div class="progress score-progress"><div class="progress-bar ${barClass}" style="width:${scoreValue}%"></div></div>
+                    </div>
+                `;
+            }).join('');
+            return `<div class="col-md-6"><h6>${label}</h6>${bars}</div>`;
+        };
+
+        categoryBars.innerHTML = `<div class="row">${renderCategoryBars('Mobile', mobile)}${renderCategoryBars('Desktop', desktop)}</div>`;
+
+        webVitalsRow.innerHTML = '<div class="col-12 text-muted">Core Web Vitals shown in each strategy report link below.</div>';
+        metricsTable.innerHTML = '<div class="text-muted">Detailed lab metrics are available in each official report.</div>';
+
+        const mobileOpp = (mobile.opportunities || []).slice(0, 3).map(o => `<li>${o.title}</li>`).join('');
+        const desktopOpp = (desktop.opportunities || []).slice(0, 3).map(o => `<li>${o.title}</li>`).join('');
+        opportunitiesList.innerHTML = `
+            <div class="row">
+                <div class="col-md-6">
+                    <h6>Mobile Top Opportunities</h6>
+                    <ul>${mobileOpp || '<li>No major opportunities</li>'}</ul>
+                </div>
+                <div class="col-md-6">
+                    <h6>Desktop Top Opportunities</h6>
+                    <ul>${desktopOpp || '<li>No major opportunities</li>'}</ul>
+                </div>
+            </div>
+        `;
+
+        fieldDataRow.innerHTML = `
+            <div class="row">
+                <div class="col-md-6">
+                    <h6>Mobile CrUX</h6>
+                    ${renderFieldDataSimple(mobile.field_data)}
+                </div>
+                <div class="col-md-6">
+                    <h6>Desktop CrUX</h6>
+                    ${renderFieldDataSimple(desktop.field_data)}
+                </div>
+            </div>
+        `;
+
+        reportLinks.innerHTML = `
+            ${mobile.report_url ? `<a href="${mobile.report_url}" target="_blank" class="btn btn-outline-primary btn-sm me-2">Open Mobile Report</a>` : ''}
+            ${desktop.report_url ? `<a href="${desktop.report_url}" target="_blank" class="btn btn-outline-secondary btn-sm">Open Desktop Report</a>` : ''}
+        `;
+
+        document.getElementById('analysisTime').textContent = new Date(data.timestamp).toLocaleString();
+    }
+
+    function showError(message) {
+        errorAlert.classList.remove('d-none');
+        document.getElementById('errorMessage').textContent = message;
+        resultsSection.classList.add('d-none');
+    }
+
+    function getScoreGrade(score) {
+        if (score >= 90) return 'A+';
+        if (score >= 80) return 'A';
+        if (score >= 70) return 'B';
+        if (score >= 60) return 'C';
+        if (score >= 50) return 'D';
+        return 'F';
+    }
+
+    function getScoreColor(score) {
+        if (score >= 90) return 'success';
+        if (score >= 70) return 'warning';
+        return 'danger';
+    }
+
+    function formatMetricName(name) {
+        return name.split('-').map(w => w.charAt(0).toUpperCase() + w.slice(1)).join(' ');
+    }
+
+    function formatFieldPercentile(metricKey, value) {
+        if (value === undefined || value === null) {
+            return 'N/A';
+        }
+        if (metricKey.includes('SHIFT')) {
+            return (value / 100).toFixed(2);
+        }
+        if (value >= 1000) {
+            return (value / 1000).toFixed(2) + 's';
+        }
+        return value + 'ms';
+    }
+
+    function renderFieldDataSimple(fieldData) {
+        if (!fieldData || !fieldData.metrics || Object.keys(fieldData.metrics).length === 0) {
+            return '<p class="text-muted">No CrUX field data available.</p>';
+        }
+
+        const metricMap = {
+            'LARGEST_CONTENTFUL_PAINT_MS': 'LCP',
+            'FIRST_INPUT_DELAY_MS': 'FID',
+            'CUMULATIVE_LAYOUT_SHIFT_SCORE': 'CLS',
+            'INTERACTION_TO_NEXT_PAINT': 'INP'
+        };
+
+        return Object.entries(fieldData.metrics).map(([metricKey, metricValue]) => {
+            const rating = (metricValue.category || '').toLowerCase();
+            const label = metricMap[metricKey] || metricKey;
+            return `
+                <div class="field-card ${rating}">
+                    <strong>${label}</strong>: ${formatFieldPercentile(metricKey, metricValue.percentile)}
+                    <span class="badge bg-secondary ms-2">${(metricValue.category || 'N/A').toUpperCase()}</span>
+                </div>
+            `;
+        }).join('');
+    }
+});
+</script>
+{% endblock %}
