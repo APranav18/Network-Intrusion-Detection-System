@@ -1702,23 +1702,6 @@ document.addEventListener('DOMContentLoaded', function() {
                     ${renderMetricMeter('First Contentful Paint (FCP)', 'FIRST_CONTENTFUL_PAINT_MS', fcp)}
                     ${renderMetricMeter('Time to First Byte (TTFB)', 'EXPERIMENTAL_TIME_TO_FIRST_BYTE', ttfb)}
                 </div>
-
-                <div class="mt-4 pt-3 border-top">
-                    <h6 class="mb-3">Audit Findings</h6>
-                    <div class="row">
-                        <div class="col-md-6">
-                            ${renderAuditSection('Accessibility', getFailedAudits(result, 'accessibility', 5))}
-                        </div>
-                        <div class="col-md-6">
-                            ${renderAuditSection('Best Practices', getFailedAudits(result, 'best-practices', 5))}
-                        </div>
-                    </div>
-                    <div class="row mt-2">
-                        <div class="col-md-6">
-                            ${renderAuditSection('SEO', getFailedAudits(result, 'seo', 5))}
-                        </div>
-                    </div>
-                </div>
             `;
         };
 
