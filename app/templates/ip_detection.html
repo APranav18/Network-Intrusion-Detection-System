@@ -388,26 +388,15 @@
                     </div>
                 </div>
 
-                <div class="col-lg-4">
-                    <div class="card shadow-sm bg-light">
-                        <div class="card-header">
-                            <h5 class="mb-0"><i class="fas fa-info-circle"></i> Notes</h5>
-                        </div>
-                        <div class="card-body small">
-                            <p class="mb-2">This integration uses the same PageSpeed data model already used in Performance Monitoring.</p>
-                            <p class="mb-2">For higher request limits, add your key in the form or set GOOGLE_PAGESPEED_API_KEY in environment.</p>
-                            <a href="https://developers.google.com/speed/docs/insights/v5/get-started" target="_blank">Get PageSpeed API key</a>
-                        </div>
-                    </div>
-                </div>
+
             </div>
 
             <div id="domainResultsSection" class="d-none mt-4">
-                <div class="card shadow-sm">
-                    <div class="card-header">
-                        <h5 class="mb-0">Domain Detection Results</h5>
+                <div class="domain-results-shell">
+                    <div class="d-flex justify-content-between align-items-center flex-wrap gap-2 mb-2">
+                        <h5 class="mb-0 text-light">Domain Detection Results</h5>
                     </div>
-                    <div class="card-body" id="domainResultsBody"></div>
+                    <div id="domainResultsBody"></div>
                 </div>
             </div>
         </div>
@@ -628,6 +617,653 @@
         margin-bottom: 0.35rem;
         color: #495057;
     }
+
+    /* Blue animated single IP result theme */
+    #singleResultsSection {
+        animation: slideDownBlue 0.45s ease-out;
+    }
+
+    @keyframes slideDownBlue {
+        from {
+            opacity: 0;
+            transform: translateY(-18px);
+        }
+        to {
+            opacity: 1;
+            transform: translateY(0);
+        }
+    }
+
+    .ip-results-container {
+        background: linear-gradient(135deg, #0f172a 0%, #111827 45%, #0c1d3a 100%);
+        border: 1px solid rgba(59, 130, 246, 0.35);
+        border-radius: 20px;
+        padding: 1.4rem;
+        box-shadow: 0 18px 40px rgba(3, 7, 18, 0.55), 0 0 0 1px rgba(96, 165, 250, 0.08) inset;
+        position: relative;
+        overflow: hidden;
+    }
+
+    .ip-results-container::before {
+        content: '';
+        position: absolute;
+        top: 0;
+        left: -40%;
+        width: 40%;
+        height: 100%;
+        background: linear-gradient(120deg, transparent, rgba(56, 189, 248, 0.14), transparent);
+        animation: sweepBlue 3.6s linear infinite;
+        pointer-events: none;
+    }
+
+    @keyframes sweepBlue {
+        to {
+            left: 120%;
+        }
+    }
+
+    .ip-display-header {
+        text-align: center;
+        margin-bottom: 1.1rem;
+    }
+
+    .ip-display-address {
+        font-family: 'JetBrains Mono', monospace;
+        font-size: clamp(2rem, 5vw, 3.8rem);
+        font-weight: 900;
+        letter-spacing: 1.5px;
+        background: linear-gradient(90deg, #60a5fa, #22d3ee);
+        -webkit-background-clip: text;
+        background-clip: text;
+        -webkit-text-fill-color: transparent;
+        margin-bottom: 0.7rem;
+        animation: pulseGlowBlue 2.4s ease-in-out infinite;
+    }
+
+    @keyframes pulseGlowBlue {
+        0%, 100% {
+            text-shadow: 0 0 14px rgba(56, 189, 248, 0.22);
+        }
+        50% {
+            text-shadow: 0 0 26px rgba(56, 189, 248, 0.45);
+        }
+    }
+
+    .ip-display-meta {
+        display: flex;
+        flex-wrap: wrap;
+        justify-content: center;
+        gap: 0.6rem;
+    }
+
+    .ip-meta-badge {
+        padding: 0.4rem 0.75rem;
+        border-radius: 999px;
+        border: 1px solid rgba(96, 165, 250, 0.45);
+        background: rgba(37, 99, 235, 0.12);
+        color: #bfdbfe;
+        font-size: 0.82rem;
+        font-weight: 600;
+        transition: transform 0.25s ease, box-shadow 0.25s ease;
+    }
+
+    .ip-meta-badge:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 8px 20px rgba(30, 64, 175, 0.3);
+    }
+
+    .ip-stats-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(160px, 1fr));
+        gap: 0.8rem;
+        margin: 1rem 0 1.2rem;
+    }
+
+    .ip-stat-card {
+        background: linear-gradient(180deg, rgba(30, 41, 59, 0.85), rgba(15, 23, 42, 0.95));
+        border: 1px solid rgba(59, 130, 246, 0.34);
+        border-radius: 14px;
+        padding: 0.85rem;
+        text-align: center;
+        transition: transform 0.28s ease, border-color 0.28s ease, box-shadow 0.28s ease;
+        animation: statRiseBlue 0.45s ease;
+    }
+
+    .ip-stat-card:hover {
+        transform: translateY(-4px);
+        border-color: rgba(56, 189, 248, 0.7);
+        box-shadow: 0 12px 22px rgba(15, 23, 42, 0.35);
+    }
+
+    @keyframes statRiseBlue {
+        from {
+            opacity: 0;
+            transform: translateY(10px);
+        }
+        to {
+            opacity: 1;
+            transform: translateY(0);
+        }
+    }
+
+    .ip-stat-label {
+        color: #93c5fd;
+        font-size: 0.72rem;
+        text-transform: uppercase;
+        letter-spacing: 0.08em;
+        margin-bottom: 0.25rem;
+        font-weight: 700;
+    }
+
+    .ip-stat-number {
+        color: #e0f2fe;
+        font-weight: 800;
+        font-size: 1.35rem;
+        line-height: 1.15;
+    }
+
+    .ip-panels-container {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(270px, 1fr));
+        gap: 0.85rem;
+    }
+
+    .ip-result-panel {
+        border: 1px solid rgba(56, 189, 248, 0.32);
+        border-radius: 14px;
+        background: rgba(15, 23, 42, 0.86);
+        overflow: hidden;
+        transition: transform 0.25s ease, border-color 0.25s ease;
+        animation: panelFadeBlue 0.5s ease;
+    }
+
+    .ip-result-panel:hover {
+        transform: translateY(-3px);
+        border-color: rgba(103, 232, 249, 0.72);
+    }
+
+    @keyframes panelFadeBlue {
+        from {
+            opacity: 0;
+            transform: translateY(8px);
+        }
+        to {
+            opacity: 1;
+            transform: translateY(0);
+        }
+    }
+
+    .ip-panel-title-row {
+        display: flex;
+        align-items: center;
+        gap: 0.5rem;
+        background: linear-gradient(90deg, rgba(30, 64, 175, 0.42), rgba(8, 145, 178, 0.2));
+        border-bottom: 1px solid rgba(125, 211, 252, 0.25);
+        padding: 0.65rem 0.85rem;
+    }
+
+    .ip-panel-title {
+        color: #dbeafe;
+        font-size: 0.92rem;
+        font-weight: 700;
+        letter-spacing: 0.03em;
+    }
+
+    .ip-panel-data {
+        padding: 0.75rem;
+    }
+
+    .ip-data-row {
+        display: grid;
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+        gap: 0.6rem;
+        margin-bottom: 0.55rem;
+    }
+
+    .ip-data-row > div {
+        background: rgba(30, 58, 138, 0.17);
+        border: 1px solid rgba(59, 130, 246, 0.26);
+        border-radius: 10px;
+        padding: 0.5rem 0.55rem;
+    }
+
+    .ip-data-label {
+        color: #93c5fd;
+        font-size: 0.65rem;
+        letter-spacing: 0.07em;
+        text-transform: uppercase;
+        margin-bottom: 0.2rem;
+        font-weight: 700;
+    }
+
+    .ip-data-value {
+        color: #e2e8f0;
+        font-size: 0.9rem;
+        font-weight: 600;
+        line-height: 1.25;
+        word-break: break-word;
+    }
+
+    .ip-data-value.accent {
+        color: #67e8f9;
+        font-weight: 700;
+    }
+
+    .ip-data-value.positive {
+        color: #34d399;
+    }
+
+    .ip-data-value.negative {
+        color: #f87171;
+    }
+
+    @media (max-width: 768px) {
+        .ip-results-container {
+            padding: 1rem;
+        }
+
+        .ip-data-row {
+            grid-template-columns: 1fr;
+        }
+
+        .ip-stats-grid {
+            grid-template-columns: repeat(2, minmax(0, 1fr));
+        }
+    }
+
+    @media (max-width: 480px) {
+        .ip-stats-grid,
+        .ip-panels-container {
+            grid-template-columns: 1fr;
+        }
+    }
+
+    /* Blue animated domain results theme */
+    #domainResultsSection {
+        animation: slideDownBlue 0.45s ease-out;
+    }
+
+    .domain-results-shell {
+        background: linear-gradient(135deg, #0f172a 0%, #111827 45%, #0c1d3a 100%);
+        border: 1px solid rgba(59, 130, 246, 0.35);
+        border-radius: 20px;
+        padding: 1.2rem;
+        box-shadow: 0 18px 40px rgba(3, 7, 18, 0.55), 0 0 0 1px rgba(96, 165, 250, 0.08) inset;
+        position: relative;
+        overflow: hidden;
+    }
+
+    .domain-results-shell::before {
+        content: '';
+        position: absolute;
+        top: 0;
+        left: -40%;
+        width: 40%;
+        height: 100%;
+        background: linear-gradient(120deg, transparent, rgba(56, 189, 248, 0.14), transparent);
+        animation: sweepBlue 3.6s linear infinite;
+        pointer-events: none;
+    }
+
+    .domain-headline {
+        color: #e2e8f0;
+        font-weight: 700;
+    }
+
+    .domain-headline .domain-url {
+        color: #67e8f9;
+        word-break: break-all;
+    }
+
+    .domain-kpi-card {
+        background: linear-gradient(180deg, rgba(30, 41, 59, 0.85), rgba(15, 23, 42, 0.95));
+        border: 1px solid rgba(59, 130, 246, 0.34);
+        border-radius: 14px;
+        padding: 0.85rem;
+        transition: transform 0.28s ease, border-color 0.28s ease, box-shadow 0.28s ease;
+        animation: statRiseBlue 0.45s ease;
+        height: 100%;
+    }
+
+    .domain-kpi-card:hover {
+        transform: translateY(-4px);
+        border-color: rgba(56, 189, 248, 0.7);
+        box-shadow: 0 12px 22px rgba(15, 23, 42, 0.35);
+    }
+
+    .domain-kpi-label {
+        color: #93c5fd;
+        font-size: 0.72rem;
+        text-transform: uppercase;
+        letter-spacing: 0.08em;
+        margin-bottom: 0.25rem;
+        font-weight: 700;
+    }
+
+    .domain-kpi-value {
+        color: #e0f2fe;
+        font-weight: 800;
+        font-size: 1.35rem;
+        line-height: 1.15;
+    }
+
+    .domain-kpi-pill {
+        display: inline-block;
+        margin-top: 0.4rem;
+        padding: 0.25rem 0.55rem;
+        border-radius: 999px;
+        font-size: 0.72rem;
+        font-weight: 700;
+        border: 1px solid rgba(125, 211, 252, 0.42);
+        background: rgba(30, 64, 175, 0.2);
+        color: #bfdbfe;
+    }
+
+    .domain-pills.nav-pills .nav-link {
+        border-radius: 999px;
+        color: #bfdbfe;
+        border: 1px solid rgba(125, 211, 252, 0.35);
+        background: rgba(37, 99, 235, 0.12);
+        font-weight: 600;
+        margin-right: 0.45rem;
+    }
+
+    .domain-pills.nav-pills .nav-link.active {
+        background: linear-gradient(90deg, rgba(37, 99, 235, 0.9), rgba(6, 182, 212, 0.85));
+        color: #eff6ff;
+        border-color: rgba(125, 211, 252, 0.85);
+    }
+
+    .domain-panel {
+        border: 1px solid rgba(56, 189, 248, 0.32);
+        border-radius: 14px;
+        background: rgba(15, 23, 42, 0.86);
+        overflow: hidden;
+        animation: panelFadeBlue 0.5s ease;
+    }
+
+    .domain-panel-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: flex-start;
+        gap: 0.6rem;
+        background: linear-gradient(90deg, rgba(30, 64, 175, 0.42), rgba(8, 145, 178, 0.2));
+        border-bottom: 1px solid rgba(125, 211, 252, 0.25);
+        padding: 0.7rem 0.9rem;
+    }
+
+    .domain-panel-title {
+        color: #dbeafe;
+        font-size: 0.95rem;
+        font-weight: 700;
+        letter-spacing: 0.03em;
+        margin: 0;
+    }
+
+    .domain-panel-subtitle {
+        color: #cbd5e1;
+        font-size: 0.78rem;
+        margin: 0.2rem 0 0;
+    }
+
+    .domain-panel-score {
+        text-align: right;
+    }
+
+    .domain-panel-score .score {
+        color: #e0f2fe;
+        font-size: 1.45rem;
+        font-weight: 800;
+        line-height: 1;
+    }
+
+    .domain-panel-score .label {
+        color: #93c5fd;
+        font-size: 0.7rem;
+        text-transform: uppercase;
+        letter-spacing: 0.08em;
+        margin-top: 0.18rem;
+    }
+
+    .domain-panel-body {
+        padding: 0.8rem;
+    }
+
+    .domain-subheading {
+        color: #bfdbfe;
+        font-size: 0.84rem;
+        text-transform: uppercase;
+        letter-spacing: 0.08em;
+        font-weight: 700;
+        margin: 0.8rem 0 0.55rem;
+    }
+
+    .psi-kpi {
+        border: 1px solid rgba(59, 130, 246, 0.34);
+        border-radius: 12px;
+        padding: 0.65rem;
+        background: rgba(30, 58, 138, 0.16);
+        transition: transform 0.2s ease;
+    }
+
+    .psi-kpi:hover {
+        transform: translateY(-2px);
+    }
+
+    .psi-kpi .metric-name {
+        color: #bfdbfe;
+        font-size: 0.8rem;
+    }
+
+    .psi-kpi .metric-value {
+        font-size: 1.25rem;
+        font-weight: 800;
+        line-height: 1.2;
+    }
+
+    .psi-good { color: #34d399; }
+    .psi-warning { color: #fbbf24; }
+    .psi-danger { color: #f87171; }
+
+    .psi-rating-pill {
+        display: inline-block;
+        font-size: 0.68rem;
+        font-weight: 700;
+        border-radius: 999px;
+        padding: 0.18rem 0.45rem;
+        text-transform: uppercase;
+        border: 1px solid transparent;
+    }
+
+    .psi-rating-pill.psi-good {
+        background: rgba(16, 185, 129, 0.2);
+        border-color: rgba(52, 211, 153, 0.45);
+    }
+
+    .psi-rating-pill.psi-warning {
+        background: rgba(245, 158, 11, 0.2);
+        border-color: rgba(251, 191, 36, 0.45);
+    }
+
+    .psi-rating-pill.psi-danger {
+        background: rgba(239, 68, 68, 0.2);
+        border-color: rgba(248, 113, 113, 0.45);
+    }
+
+    .domain-chart-card {
+        border: 1px solid rgba(56, 189, 248, 0.32);
+        border-radius: 14px;
+        padding: 0.75rem;
+        height: 100%;
+        min-height: 320px;
+        background: rgba(15, 23, 42, 0.86);
+    }
+
+    .domain-chart-card canvas {
+        display: block;
+        width: 100% !important;
+        height: 260px !important;
+        max-height: 260px !important;
+    }
+
+    .domain-chart-title {
+        color: #dbeafe;
+        font-weight: 700;
+        margin-bottom: 0.45rem;
+    }
+
+    .psi-score-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(102px, 1fr));
+        gap: 0.55rem;
+        margin-bottom: 0.8rem;
+    }
+
+    .psi-score-item {
+        text-align: center;
+    }
+
+    .psi-score-circle {
+        width: 68px;
+        height: 68px;
+        margin: 0 auto 0.3rem auto;
+        border-radius: 50%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-weight: 800;
+        font-size: 1.05rem;
+        color: #e2e8f0;
+        background: rgba(15, 23, 42, 0.6);
+        border: 3px solid rgba(59, 130, 246, 0.35);
+    }
+
+    .psi-score-circle.psi-good {
+        border-color: rgba(52, 211, 153, 0.75);
+    }
+
+    .psi-score-circle.psi-warning {
+        border-color: rgba(251, 191, 36, 0.75);
+    }
+
+    .psi-score-circle.psi-danger {
+        border-color: rgba(248, 113, 113, 0.75);
+    }
+
+    .psi-preview-card {
+        border: 1px solid rgba(59, 130, 246, 0.34);
+        border-radius: 12px;
+        padding: 0.5rem;
+        background: rgba(15, 23, 42, 0.7);
+        margin-bottom: 0.8rem;
+    }
+
+    .psi-preview-card img {
+        width: 100%;
+        max-height: 280px;
+        object-fit: contain;
+        background: rgba(2, 6, 23, 0.6);
+        border-radius: 0.35rem;
+        border: 1px solid rgba(59, 130, 246, 0.25);
+    }
+
+    .psi-audit-list {
+        border: 1px solid rgba(59, 130, 246, 0.34);
+        border-radius: 10px;
+        background: rgba(30, 58, 138, 0.12);
+        margin-bottom: 0.6rem;
+    }
+
+    .psi-audit-list .psi-audit-title {
+        color: #dbeafe;
+        font-weight: 700;
+        padding: 0.45rem 0.65rem;
+        border-bottom: 1px solid rgba(125, 211, 252, 0.2);
+        background: rgba(30, 64, 175, 0.28);
+        font-size: 0.82rem;
+    }
+
+    .psi-audit-list ul {
+        margin: 0;
+        padding: 0.5rem 1rem 0.6rem 1.45rem;
+    }
+
+    .psi-audit-list li {
+        margin-bottom: 0.28rem;
+        color: #cbd5e1;
+        font-size: 0.84rem;
+    }
+
+    .domain-panel .btn {
+        border-radius: 999px;
+        font-size: 0.75rem;
+        font-weight: 700;
+    }
+
+    .domain-pie-wrap {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        gap: 1rem;
+        flex-wrap: wrap;
+        min-height: 240px;
+    }
+
+    .domain-pie {
+        width: 180px;
+        height: 180px;
+        border-radius: 50%;
+        border: 2px solid rgba(125, 211, 252, 0.4);
+        box-shadow: 0 10px 24px rgba(2, 6, 23, 0.45);
+        position: relative;
+        flex-shrink: 0;
+        background: conic-gradient(#3b82f6 0 50%, #22d3ee 50% 100%);
+    }
+
+    .domain-pie::after {
+        content: '';
+        position: absolute;
+        inset: 38px;
+        border-radius: 50%;
+        background: rgba(15, 23, 42, 0.95);
+        border: 1px solid rgba(59, 130, 246, 0.25);
+    }
+
+    .domain-pie-legend {
+        min-width: 170px;
+    }
+
+    .domain-pie-legend-item {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        margin-bottom: 0.45rem;
+        font-size: 0.85rem;
+        color: #cbd5e1;
+        gap: 0.7rem;
+    }
+
+    .domain-pie-dot {
+        width: 10px;
+        height: 10px;
+        border-radius: 50%;
+        display: inline-block;
+        margin-right: 0.45rem;
+        box-shadow: 0 0 0 1px rgba(255, 255, 255, 0.12);
+        flex-shrink: 0;
+    }
+
+    .domain-pie-label {
+        display: inline-flex;
+        align-items: center;
+        color: #e2e8f0;
+        font-weight: 600;
+    }
+
+    .domain-pie-value {
+        color: #7dd3fc;
+        font-weight: 700;
+    }
 </style>
 
 <script>
@@ -845,123 +1481,170 @@ document.addEventListener('DOMContentLoaded', function() {
         const geolocation = data.geolocation || {};
         const reverseLookup = data.reverse_lookup || {};
         const attackAssessment = data.attack_assessment || {};
-        const threatIntel = data.threat_intelligence || {};
         const threatScore = data.overall_threat_score || {};
-        const threatVerdict = threatScore.recommendation || attackAssessment.status_label || 'Analysis completed';
-        const threatRisk = threatScore.risk_level || attackAssessment.status || 'unknown';
-        const threatScoreValue = Number.isFinite(Number(threatScore.score)) ? Number(threatScore.score) : null;
 
-        const typeClass = validation.is_private ? 'private' : 
-                         validation.is_reserved ? 'reserved' : 'public';
+        const ipType = validation.is_private ? 'Private' : validation.is_reserved ? 'Reserved' : 'Public';
+        const versionLabel = validation.version || (validation.is_ipv4 ? 'IPv4' : validation.is_ipv6 ? 'IPv6' : 'Unknown');
         const attackStatus = attackAssessment.status || 'unknown';
-        const attackBadgeClass = attackStatus === 'attacked' ? 'danger' : 
-                                attackStatus === 'suspicious' ? 'warning' : 
-                                attackStatus === 'watchlist' ? 'info' : 'success';
         const attackLabel = attackAssessment.status_label || 'No known attack';
-        const attackTypes = (attackAssessment.attack_types || []).slice(0, 3).map(item => item.attack_type).join(', ') || 'None recorded';
-        const threatIntelLabel = threatIntel.found ? `${threatIntel.name || 'Known reputation'}${threatIntel.source ? ` (${threatIntel.source})` : ''}` : 'No known reputation hit';
+        const riskLevel = classification.risk_level || threatScore.risk_level || 'Unknown';
+        const threatPoints = Number.isFinite(Number(threatScore.score)) ? `${Number(threatScore.score).toFixed(1)} / 100` : 'N/A';
+        const intelLabel = data.threat_intelligence && data.threat_intelligence.found
+            ? `${data.threat_intelligence.name || 'Known'}${data.threat_intelligence.source ? ` (${data.threat_intelligence.source})` : ''}`
+            : 'No known reputation hit';
 
         resultsRow.innerHTML = `
-            <div class="col-lg-6 mb-3">
-                <div class="card ip-card ${typeClass}">
-                    <div class="card-body">
-                        <h5>${data.ip}</h5>
-                        <div class="ip-badge ${typeClass}">${classification.type.join(', ')}</div>
-                        <p class="text-muted mb-2">${classification.description}</p>
-                        <small class="d-block">
-                            <strong>Version:</strong> ${validation.version}<br>
-                            <strong>IPv4:</strong> ${validation.is_ipv4 ? '✓' : '✗'}<br>
-                            <strong>IPv6:</strong> ${validation.is_ipv6 ? '✓' : '✗'}
-                        </small>
+            <div class="col-12">
+                <div class="ip-results-container">
+                    <div class="ip-display-header">
+                        <div class="ip-display-address">${data.ip}</div>
+                        <div class="ip-display-meta">
+                            <div class="ip-meta-badge">${ipType === 'Public' ? '🌐' : ipType === 'Private' ? '🔒' : '⚠️'} ${ipType}</div>
+                            <div class="ip-meta-badge">🧠 ${riskLevel}</div>
+                            <div class="ip-meta-badge">📡 ${versionLabel}</div>
+                            <div class="ip-meta-badge">${validation.is_valid ? '✅ Valid' : '❌ Invalid'}</div>
+                        </div>
                     </div>
-                </div>
-            </div>
 
-            <div class="col-lg-6 mb-3">
-                <div class="card border-${threatRisk === 'critical' ? 'danger' : threatRisk === 'high' ? 'warning' : threatRisk === 'medium' ? 'info' : 'success'}">
-                    <div class="card-header bg-${threatRisk === 'critical' ? 'danger' : threatRisk === 'high' ? 'warning' : threatRisk === 'medium' ? 'info' : 'success'} text-white">
-                        <h6 class="mb-0">🧠 AI Detection Verdict</h6>
+                    <div class="ip-stats-grid">
+                        <div class="ip-stat-card">
+                            <div class="ip-stat-label">Threat Score</div>
+                            <div class="ip-stat-number">${threatPoints}</div>
+                        </div>
+                        <div class="ip-stat-card">
+                            <div class="ip-stat-label">Status</div>
+                            <div class="ip-stat-number">${attackAssessment.attacked ? 'ATTACKED' : 'CLEAR'}</div>
+                        </div>
+                        <div class="ip-stat-card">
+                            <div class="ip-stat-label">Total Alerts</div>
+                            <div class="ip-stat-number">${attackAssessment.total_alert_count ?? 0}</div>
+                        </div>
+                        <div class="ip-stat-card">
+                            <div class="ip-stat-label">Geo</div>
+                            <div class="ip-stat-number">${geolocation.country_code || 'N/A'}</div>
+                        </div>
                     </div>
-                    <div class="card-body">
-                        <span class="badge bg-${threatRisk === 'critical' ? 'danger' : threatRisk === 'high' ? 'warning' : threatRisk === 'medium' ? 'info' : 'success'} text-dark mb-2">${threatVerdict}</span>
-                        <small class="d-block">
-                            <strong>Risk level:</strong> ${threatRisk}<br>
-                            <strong>Threat score:</strong> ${threatScoreValue !== null ? `${threatScoreValue.toFixed(2)} / 100` : 'N/A'}<br>
-                            <strong>Recommendation:</strong> ${threatVerdict}<br>
-                            <strong>Threat intel:</strong> ${threatIntelLabel}<br>
-                            <strong>Factors:</strong> ${(threatScore.factors || []).length ? threatScore.factors.join(', ') : 'IP analyzed using geolocation, DNS, and history signals'}
-                        </small>
-                    </div>
-                </div>
-            </div>
 
-            ${attackAssessment.available !== false ? `
-            <div class="col-lg-6 mb-3">
-                <div class="card border-${attackBadgeClass}">
-                    <div class="card-header bg-${attackBadgeClass} text-white">
-                        <h6 class="mb-0">🛡 Attack History</h6>
-                    </div>
-                    <div class="card-body">
-                        <span class="badge bg-${attackBadgeClass} mb-2">${attackLabel}</span>
-                        <small class="d-block">
-                            <strong>Attacked:</strong> ${attackAssessment.attacked ? 'Yes' : 'No'}<br>
-                            <strong>Source alerts:</strong> ${attackAssessment.source_alert_count ?? 0}<br>
-                            <strong>Destination alerts:</strong> ${attackAssessment.destination_alert_count ?? 0}<br>
-                            <strong>Total alerts:</strong> ${attackAssessment.total_alert_count ?? 0}<br>
-                            <strong>Attack types:</strong> ${attackTypes}
-                            ${attackAssessment.last_seen ? `<br><strong>Last seen:</strong> ${attackAssessment.last_seen}` : ''}
-                            ${attackAssessment.threat_intelligence ? `<br><strong>Threat intel:</strong> ${attackAssessment.threat_intelligence.threat_type || 'Known'}${attackAssessment.threat_intelligence.source ? ` (${attackAssessment.threat_intelligence.source})` : ''}` : ''}
-                        </small>
-                    </div>
-                </div>
-            </div>
-            ` : `
-            <div class="col-lg-6 mb-3">
-                <div class="card border-secondary">
-                    <div class="card-header bg-secondary text-white">
-                        <h6 class="mb-0">🛡 Attack History</h6>
-                    </div>
-                    <div class="card-body">
-                        <small class="text-muted">Attack history lookup is unavailable for this analysis.</small>
-                    </div>
-                </div>
-            </div>
-            `}
+                    <div class="ip-panels-container">
+                        <div class="ip-result-panel">
+                            <div class="ip-panel-title-row">
+                                <span class="ip-panel-title-icon">🛡️</span>
+                                <span class="ip-panel-title">Security Summary</span>
+                            </div>
+                            <div class="ip-panel-data">
+                                <div class="ip-data-row">
+                                    <div>
+                                        <div class="ip-data-label">Attack Label</div>
+                                        <div class="ip-data-value ${attackAssessment.attacked ? 'negative' : 'positive'}">${attackLabel}</div>
+                                    </div>
+                                    <div>
+                                        <div class="ip-data-label">Risk Level</div>
+                                        <div class="ip-data-value accent">${riskLevel}</div>
+                                    </div>
+                                </div>
+                                <div class="ip-data-row">
+                                    <div>
+                                        <div class="ip-data-label">Source Alerts</div>
+                                        <div class="ip-data-value">${attackAssessment.source_alert_count ?? 0}</div>
+                                    </div>
+                                    <div>
+                                        <div class="ip-data-label">Destination Alerts</div>
+                                        <div class="ip-data-value">${attackAssessment.destination_alert_count ?? 0}</div>
+                                    </div>
+                                </div>
+                                <div class="ip-data-row">
+                                    <div>
+                                        <div class="ip-data-label">Threat Intel</div>
+                                        <div class="ip-data-value">${intelLabel}</div>
+                                    </div>
+                                    <div>
+                                        <div class="ip-data-label">Last Seen</div>
+                                        <div class="ip-data-value">${attackAssessment.last_seen || 'N/A'}</div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
 
-            ${geolocation.country ? `
-            <div class="col-lg-6 mb-3">
-                <div class="card">
-                    <div class="card-header">
-                        <h6 class="mb-0">🌍 Geolocation</h6>
-                    </div>
-                    <div class="card-body">
-                        <small>
-                            <strong>Country:</strong> ${geolocation.country} (${geolocation.country_code})<br>
-                            ${geolocation.city ? `<strong>City:</strong> ${geolocation.city}<br>` : ''}
-                            ${geolocation.isp ? `<strong>ISP:</strong> ${geolocation.isp}<br>` : ''}
-                            ${geolocation.organization ? `<strong>Organization:</strong> ${geolocation.organization}<br>` : ''}
-                            ${geolocation.latitude ? `<strong>Coordinates:</strong> ${geolocation.latitude}, ${geolocation.longitude}<br>` : ''}
-                            <strong>Source:</strong> ${geolocation.source || 'Unknown'}
-                        </small>
-                    </div>
-                </div>
-            </div>
-            ` : ''}
+                        <div class="ip-result-panel">
+                            <div class="ip-panel-title-row">
+                                <span class="ip-panel-title-icon">🌍</span>
+                                <span class="ip-panel-title">Geolocation</span>
+                            </div>
+                            <div class="ip-panel-data">
+                                <div class="ip-data-row">
+                                    <div>
+                                        <div class="ip-data-label">Country</div>
+                                        <div class="ip-data-value accent">${geolocation.country || 'Unknown'}</div>
+                                    </div>
+                                    <div>
+                                        <div class="ip-data-label">Code</div>
+                                        <div class="ip-data-value">${geolocation.country_code || 'N/A'}</div>
+                                    </div>
+                                </div>
+                                <div class="ip-data-row">
+                                    <div>
+                                        <div class="ip-data-label">City</div>
+                                        <div class="ip-data-value">${geolocation.city || 'N/A'}</div>
+                                    </div>
+                                    <div>
+                                        <div class="ip-data-label">ISP</div>
+                                        <div class="ip-data-value">${geolocation.isp || 'N/A'}</div>
+                                    </div>
+                                </div>
+                                <div class="ip-data-row">
+                                    <div>
+                                        <div class="ip-data-label">Organization</div>
+                                        <div class="ip-data-value">${geolocation.organization || 'N/A'}</div>
+                                    </div>
+                                    <div>
+                                        <div class="ip-data-label">Coordinates</div>
+                                        <div class="ip-data-value">${geolocation.latitude && geolocation.longitude ? `${geolocation.latitude}, ${geolocation.longitude}` : 'N/A'}</div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
 
-            ${reverseLookup.hostname ? `
-            <div class="col-lg-6 mb-3">
-                <div class="card">
-                    <div class="card-header">
-                        <h6 class="mb-0">🔎 Reverse DNS</h6>
-                    </div>
-                    <div class="card-body">
-                        <small>
-                            <strong>Hostname:</strong> ${reverseLookup.hostname}
-                        </small>
+                        <div class="ip-result-panel">
+                            <div class="ip-panel-title-row">
+                                <span class="ip-panel-title-icon">📋</span>
+                                <span class="ip-panel-title">IP Details</span>
+                            </div>
+                            <div class="ip-panel-data">
+                                <div class="ip-data-row">
+                                    <div>
+                                        <div class="ip-data-label">Type</div>
+                                        <div class="ip-data-value accent">${ipType}</div>
+                                    </div>
+                                    <div>
+                                        <div class="ip-data-label">Protocol</div>
+                                        <div class="ip-data-value">${versionLabel}</div>
+                                    </div>
+                                </div>
+                                <div class="ip-data-row">
+                                    <div>
+                                        <div class="ip-data-label">IPv4</div>
+                                        <div class="ip-data-value ${validation.is_ipv4 ? 'positive' : 'negative'}">${validation.is_ipv4 ? 'Yes' : 'No'}</div>
+                                    </div>
+                                    <div>
+                                        <div class="ip-data-label">IPv6</div>
+                                        <div class="ip-data-value ${validation.is_ipv6 ? 'positive' : 'negative'}">${validation.is_ipv6 ? 'Yes' : 'No'}</div>
+                                    </div>
+                                </div>
+                                <div class="ip-data-row">
+                                    <div>
+                                        <div class="ip-data-label">Reverse DNS</div>
+                                        <div class="ip-data-value">${reverseLookup.hostname || 'N/A'}</div>
+                                    </div>
+                                    <div>
+                                        <div class="ip-data-label">Analysis State</div>
+                                        <div class="ip-data-value ${attackStatus === 'attacked' ? 'negative' : 'positive'}">${attackStatus}</div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
                     </div>
                 </div>
             </div>
-            ` : ''}
         `;
 
         document.getElementById('singleResultsSection').classList.remove('d-none');
@@ -1335,7 +2018,7 @@ document.addEventListener('DOMContentLoaded', function() {
             if (!result?.success) {
                 const fallbackReport = result?.report_url || `https://pagespeed.web.dev/analysis?url=${encodeURIComponent(data.url || data.domain || '')}&form_factor=${label.toLowerCase()}`;
                 return `
-                    <div class="alert alert-warning mb-3">
+                    <div class="alert alert-warning mb-3" style="background: rgba(245, 158, 11, 0.2); border-color: rgba(251,191,36,0.45); color: #fef3c7;">
                         <strong>${label} analysis unavailable.</strong><br>
                         ${result?.error || 'PageSpeed API request failed.'}
                     </div>
@@ -1372,81 +2055,83 @@ document.addEventListener('DOMContentLoaded', function() {
             };
 
             return `
-                <div class="mb-3 d-flex justify-content-between align-items-start flex-wrap gap-2">
+                <div class="domain-panel-header">
                     <div>
-                        <div class="h6 mb-1">${label} Report</div>
-                        <div class="text-muted small">Core Web Vitals Assessment: <strong class="${cwvVerdict(result) === 'Passed' ? 'text-success' : 'text-danger'}">${cwvVerdict(result)}</strong></div>
+                        <h6 class="domain-panel-title">${label} Report</h6>
+                        <p class="domain-panel-subtitle">Core Web Vitals Assessment: <strong class="${cwvVerdict(result) === 'Passed' ? 'psi-good' : 'psi-danger'}">${cwvVerdict(result)}</strong></p>
                     </div>
-                    <div class="text-end">
-                        <div class="h4 mb-1">${score}</div>
-                        <div class="text-muted small">Performance Score</div>
+                    <div class="domain-panel-score">
+                        <div class="score">${score}</div>
+                        <div class="label">Performance</div>
                     </div>
                 </div>
 
-                ${renderCategoryScores(result)}
+                <div class="domain-panel-body">
+                    ${renderCategoryScores(result)}
 
-                ${screenshotData ? `
-                    <div class="psi-preview-card">
-                        <div class="small text-muted mb-2">Captured page preview (${label})</div>
-                        <img src="${screenshotData}" alt="${label} screenshot preview" />
+                    ${screenshotData ? `
+                        <div class="psi-preview-card">
+                            <div class="small text-info-emphasis mb-2">Captured page preview (${label})</div>
+                            <img src="${screenshotData}" alt="${label} screenshot preview" />
+                        </div>
+                    ` : ''}
+
+                    <div class="domain-subheading">Core Web Vitals</div>
+                    <div class="row mb-3">
+                        ${metricBox('Largest Contentful Paint (LCP)', 'LARGEST_CONTENTFUL_PAINT_MS', lcp)}
+                        ${metricBox('Interaction to Next Paint (INP)', 'INTERACTION_TO_NEXT_PAINT', inp)}
+                        ${metricBox('Cumulative Layout Shift (CLS)', 'CUMULATIVE_LAYOUT_SHIFT_SCORE', cls)}
                     </div>
-                ` : ''}
 
-                <div class="mb-2"><strong>Core Web Vitals</strong></div>
-                <div class="row mb-3">
-                    ${metricBox('Largest Contentful Paint (LCP)', 'LARGEST_CONTENTFUL_PAINT_MS', lcp)}
-                    ${metricBox('Interaction to Next Paint (INP)', 'INTERACTION_TO_NEXT_PAINT', inp)}
-                    ${metricBox('Cumulative Layout Shift (CLS)', 'CUMULATIVE_LAYOUT_SHIFT_SCORE', cls)}
-                </div>
+                    <div class="domain-subheading">Other Notable Metrics</div>
+                    <div class="row mb-3">
+                        ${metricBox('First Contentful Paint (FCP)', 'FIRST_CONTENTFUL_PAINT_MS', fcp)}
+                        ${metricBox('Time to First Byte (TTFB)', 'EXPERIMENTAL_TIME_TO_FIRST_BYTE', ttfb)}
+                    </div>
 
-                <div class="mb-2"><strong>Other Notable Metrics</strong></div>
-                <div class="row mb-3">
-                    ${metricBox('First Contentful Paint (FCP)', 'FIRST_CONTENTFUL_PAINT_MS', fcp)}
-                    ${metricBox('Time to First Byte (TTFB)', 'EXPERIMENTAL_TIME_TO_FIRST_BYTE', ttfb)}
-                </div>
+                    <div class="domain-subheading">Category Findings</div>
+                    ${renderAuditSection('Accessibility', accessibilityIssues)}
+                    ${renderAuditSection('Best Practices', bestPracticeIssues)}
+                    ${renderAuditSection('SEO', seoIssues)}
 
-                <div class="mb-2"><strong>Category Findings</strong></div>
-                ${renderAuditSection('Accessibility', accessibilityIssues)}
-                ${renderAuditSection('Best Practices', bestPracticeIssues)}
-                ${renderAuditSection('SEO', seoIssues)}
-
-                <div>
-                    ${result?.report_url ? `<a href="${result.report_url}" target="_blank" class="btn ${buttonClass} btn-sm">Open Official PageSpeed Report</a>` : ''}
+                    <div>
+                        ${result?.report_url ? `<a href="${result.report_url}" target="_blank" class="btn ${buttonClass} btn-sm">Open Official PageSpeed Report</a>` : ''}
+                    </div>
                 </div>
             `;
         };
 
         body.innerHTML = `
-            <div class="mb-3">
-                <strong>Domain:</strong> ${data.domain}<br>
-                <strong>Resolved URL:</strong> ${data.url}
+            <div class="domain-headline mb-3">
+                <div><strong>Domain:</strong> ${data.domain}</div>
+                <div><strong>Resolved URL:</strong> <span class="domain-url">${data.url}</span></div>
             </div>
 
             <div class="row mb-3">
                 <div class="col-md-4 mb-2">
-                    <div class="psi-kpi h-100">
-                        <div class="metric-name mb-1">Aggregate Domain Score</div>
-                        <div class="metric-value ${scoreClass(domainScore ?? 0)}">${domainScore ?? 'N/A'}</div>
-                        <span class="psi-rating-pill ${scoreClass(domainScore ?? 0)}">${domainGrade}</span>
+                    <div class="domain-kpi-card">
+                        <div class="domain-kpi-label">Aggregate Domain Score</div>
+                        <div class="domain-kpi-value ${scoreClass(domainScore ?? 0)}">${domainScore ?? 'N/A'}</div>
+                        <span class="domain-kpi-pill">${domainGrade}</span>
                     </div>
                 </div>
                 <div class="col-md-4 mb-2">
-                    <div class="psi-kpi h-100">
-                        <div class="metric-name mb-1">Mobile Score</div>
-                        <div class="metric-value ${scoreClass(mobileScore)}">${mobileScore}</div>
-                        <span class="psi-rating-pill ${scoreClass(mobileScore)}">Performance</span>
+                    <div class="domain-kpi-card">
+                        <div class="domain-kpi-label">Mobile Score</div>
+                        <div class="domain-kpi-value ${scoreClass(mobileScore)}">${mobileScore}</div>
+                        <span class="domain-kpi-pill">Performance</span>
                     </div>
                 </div>
                 <div class="col-md-4 mb-2">
-                    <div class="psi-kpi h-100">
-                        <div class="metric-name mb-1">Desktop Score Spread</div>
-                        <div class="metric-value ${scoreClass(desktopScore)}">${scoreSpread}</div>
-                        <span class="psi-rating-pill ${scoreClass(desktopScore)}">Points difference</span>
+                    <div class="domain-kpi-card">
+                        <div class="domain-kpi-label">Desktop Score Spread</div>
+                        <div class="domain-kpi-value ${scoreClass(desktopScore)}">${scoreSpread}</div>
+                        <span class="domain-kpi-pill">Points difference</span>
                     </div>
                 </div>
             </div>
 
-            <ul class="nav nav-pills mb-3" id="domainResultPills" role="tablist">
+            <ul class="nav nav-pills domain-pills mb-3" id="domainResultPills" role="tablist">
                 <li class="nav-item" role="presentation">
                     <button class="nav-link active" id="domain-mobile-tab" data-bs-toggle="pill" data-bs-target="#domain-mobile-panel" type="button" role="tab">Mobile</button>
                 </li>
@@ -1457,17 +2142,13 @@ document.addEventListener('DOMContentLoaded', function() {
 
             <div class="tab-content" id="domainResultPillContent">
                 <div class="tab-pane fade show active" id="domain-mobile-panel" role="tabpanel" aria-labelledby="domain-mobile-tab">
-                    <div class="card border-primary">
-                        <div class="card-body">
-                            ${renderStrategyPanel('Mobile', data.mobile, mobileScore, 'btn-outline-primary')}
-                        </div>
+                    <div class="domain-panel">
+                        ${renderStrategyPanel('Mobile', data.mobile, mobileScore, 'btn-outline-info')}
                     </div>
                 </div>
                 <div class="tab-pane fade" id="domain-desktop-panel" role="tabpanel" aria-labelledby="domain-desktop-tab">
-                    <div class="card border-secondary">
-                        <div class="card-body">
-                            ${renderStrategyPanel('Desktop', data.desktop, desktopScore, 'btn-outline-secondary')}
-                        </div>
+                    <div class="domain-panel">
+                        ${renderStrategyPanel('Desktop', data.desktop, desktopScore, 'btn-outline-light')}
                     </div>
                 </div>
             </div>
@@ -1493,23 +2174,61 @@ document.addEventListener('DOMContentLoaded', function() {
     }
 
     function renderDomainCharts(data) {
-        if (typeof Chart === 'undefined') {
-            return;
-        }
-
-        if (!window.domainDetectionCharts) {
-            window.domainDetectionCharts = {};
-        }
-
-        if (window.domainDetectionCharts.category) {
-            window.domainDetectionCharts.category.destroy();
-        }
-        if (window.domainDetectionCharts.vitals) {
-            window.domainDetectionCharts.vitals.destroy();
-        }
-
         const mobile = data.mobile || {};
         const desktop = data.desktop || {};
+
+        const categoryCanvas = document.getElementById('domainCategoryScoreChart');
+        const vitalsCanvas = document.getElementById('domainVitalsChart');
+
+        const renderPieFallback = (canvasEl, slices, title) => {
+            if (!canvasEl) return;
+            const parent = canvasEl.parentElement;
+            if (!parent) return;
+
+            const safeSlices = (slices || []).map((s) => ({
+                ...s,
+                value: Number.isFinite(Number(s.value)) ? Number(s.value) : 0
+            }));
+
+            const total = safeSlices.reduce((sum, item) => sum + item.value, 0);
+            const normalized = total > 0
+                ? safeSlices.map((item) => ({ ...item, percent: (item.value / total) * 100 }))
+                : safeSlices.map((item) => ({ ...item, percent: 100 / safeSlices.length }));
+
+            let cursor = 0;
+            const gradientStops = normalized.map((item) => {
+                const from = cursor;
+                const to = cursor + item.percent;
+                cursor = to;
+                return `${item.color} ${from.toFixed(2)}% ${to.toFixed(2)}%`;
+            }).join(', ');
+
+            const legendHtml = normalized.map((item) => `
+                <div class="domain-pie-legend-item">
+                    <span class="domain-pie-label"><span class="domain-pie-dot" style="background:${item.color};"></span>${item.label}</span>
+                    <span class="domain-pie-value">${item.percent.toFixed(1)}%</span>
+                </div>
+            `).join('');
+
+            parent.innerHTML = `
+                <div class="domain-pie-wrap" aria-label="${title}">
+                    <div class="domain-pie" style="background: conic-gradient(${gradientStops});"></div>
+                    <div class="domain-pie-legend">${legendHtml}</div>
+                </div>
+            `;
+        };
+
+        if (typeof Chart !== 'undefined') {
+            if (!window.domainDetectionCharts) {
+                window.domainDetectionCharts = {};
+            }
+            if (window.domainDetectionCharts.category) {
+                window.domainDetectionCharts.category.destroy();
+            }
+            if (window.domainDetectionCharts.vitals) {
+                window.domainDetectionCharts.vitals.destroy();
+            }
+        }
 
         const getMetricRecord = (metrics, key) => {
             if (!metrics) return null;
@@ -1522,51 +2241,53 @@ document.addEventListener('DOMContentLoaded', function() {
             return metrics[key] || null;
         };
 
-        // Chart 1: Category scores (0-100)
-        const categoryCanvas = document.getElementById('domainCategoryScoreChart');
+        // Chart 1: Performance split pie
         if (categoryCanvas) {
             const mobilePerformance = Number.isFinite(Number(mobile?.scores?.performance)) ? Number(mobile.scores.performance) : null;
             const desktopPerformance = Number.isFinite(Number(desktop?.scores?.performance)) ? Number(desktop.scores.performance) : null;
             const totalPerformance = (mobilePerformance || 0) + (desktopPerformance || 0);
-            const mobileShare = totalPerformance > 0 && mobilePerformance !== null ? (mobilePerformance / totalPerformance) * 100 : null;
-            const desktopShare = totalPerformance > 0 && desktopPerformance !== null ? (desktopPerformance / totalPerformance) * 100 : null;
+            const mobileShare = totalPerformance > 0 && mobilePerformance !== null ? (mobilePerformance / totalPerformance) * 100 : 50;
+            const desktopShare = totalPerformance > 0 && desktopPerformance !== null ? (desktopPerformance / totalPerformance) * 100 : 50;
 
-            window.domainDetectionCharts.category = new Chart(categoryCanvas.getContext('2d'), {
-                type: 'pie',
-                data: {
-                    labels: ['Mobile', 'Desktop'],
-                    datasets: [
-                        {
-                            data: [mobileShare, desktopShare],
-                            backgroundColor: ['rgba(13, 110, 253, 0.8)', 'rgba(108, 117, 125, 0.8)'],
-                            borderColor: ['rgba(13, 110, 253, 1)', 'rgba(108, 117, 125, 1)'],
-                            borderWidth: 2,
-                            hoverOffset: 6,
-                        }
-                    ]
-                },
-                options: {
-                    responsive: true,
-                    maintainAspectRatio: false,
-                    plugins: {
-                        legend: { position: 'bottom' },
-                        tooltip: {
-                            callbacks: {
-                                label: (ctx) => {
-                                    if (ctx.raw === null || ctx.raw === undefined) {
-                                        return `${ctx.dataset.label}: N/A`;
+            if (typeof Chart === 'undefined') {
+                renderPieFallback(categoryCanvas, [
+                    { label: 'Mobile', value: mobileShare, color: 'rgba(59, 130, 246, 0.9)' },
+                    { label: 'Desktop', value: desktopShare, color: 'rgba(34, 211, 238, 0.9)' }
+                ], 'Performance Score Split');
+            } else {
+                window.domainDetectionCharts.category = new Chart(categoryCanvas.getContext('2d'), {
+                    type: 'pie',
+                    data: {
+                        labels: ['Mobile', 'Desktop'],
+                        datasets: [
+                            {
+                                data: [mobileShare, desktopShare],
+                                backgroundColor: ['rgba(59, 130, 246, 0.85)', 'rgba(34, 211, 238, 0.85)'],
+                                borderColor: ['rgba(125, 211, 252, 1)', 'rgba(103, 232, 249, 1)'],
+                                borderWidth: 2,
+                                hoverOffset: 6,
+                            }
+                        ]
+                    },
+                    options: {
+                        responsive: true,
+                        maintainAspectRatio: false,
+                        plugins: {
+                            legend: { position: 'bottom' },
+                            tooltip: {
+                                callbacks: {
+                                    label: (ctx) => {
+                                        return `${ctx.label}: ${Number(ctx.raw).toFixed(1)}%`;
                                     }
-                                    return `${ctx.label}: ${Number(ctx.raw).toFixed(1)}%`;
                                 }
                             }
                         }
                     }
-                }
-            });
+                });
+            }
         }
 
-        // Chart 2: Core Web Vitals quality score (derived from official thresholds)
-        const vitalsCanvas = document.getElementById('domainVitalsChart');
+        // Chart 2: Core Web Vitals quality split pie
         if (vitalsCanvas) {
             const mobileMetrics = mobile.field_data?.metrics || {};
             const desktopMetrics = desktop.field_data?.metrics || {};
@@ -1614,41 +2335,45 @@ document.addEventListener('DOMContentLoaded', function() {
                 desktopValues.filter((v) => Number.isFinite(v)).reduce((sum, value) => sum + value, 0)
             ];
             const totalQuality = qualitySlices[0] + qualitySlices[1];
-            const mobileQualityShare = totalQuality > 0 ? (qualitySlices[0] / totalQuality) * 100 : null;
-            const desktopQualityShare = totalQuality > 0 ? (qualitySlices[1] / totalQuality) * 100 : null;
+            const mobileQualityShare = totalQuality > 0 ? (qualitySlices[0] / totalQuality) * 100 : 50;
+            const desktopQualityShare = totalQuality > 0 ? (qualitySlices[1] / totalQuality) * 100 : 50;
 
-            window.domainDetectionCharts.vitals = new Chart(vitalsCanvas.getContext('2d'), {
-                type: 'pie',
-                data: {
-                    labels: ['Mobile field data', 'Desktop field data'],
-                    datasets: [
-                        {
-                            data: [mobileQualityShare, desktopQualityShare],
-                            backgroundColor: ['rgba(25, 135, 84, 0.8)', 'rgba(220, 53, 69, 0.8)'],
-                            borderColor: ['rgba(25, 135, 84, 1)', 'rgba(220, 53, 69, 1)'],
-                            borderWidth: 2,
-                            hoverOffset: 6,
-                        }
-                    ]
-                },
-                options: {
-                    responsive: true,
-                    maintainAspectRatio: false,
-                    plugins: {
-                        legend: { position: 'bottom' },
-                        tooltip: {
-                            callbacks: {
-                                label: (ctx) => {
-                                    if (ctx.raw === null || ctx.raw === undefined) {
-                                        return `${ctx.dataset.label}: N/A`;
+            if (typeof Chart === 'undefined') {
+                renderPieFallback(vitalsCanvas, [
+                    { label: 'Mobile field data', value: mobileQualityShare, color: 'rgba(59, 130, 246, 0.9)' },
+                    { label: 'Desktop field data', value: desktopQualityShare, color: 'rgba(16, 185, 129, 0.9)' }
+                ], 'Core Web Vitals Quality Split');
+            } else {
+                window.domainDetectionCharts.vitals = new Chart(vitalsCanvas.getContext('2d'), {
+                    type: 'pie',
+                    data: {
+                        labels: ['Mobile field data', 'Desktop field data'],
+                        datasets: [
+                            {
+                                data: [mobileQualityShare, desktopQualityShare],
+                                backgroundColor: ['rgba(59, 130, 246, 0.85)', 'rgba(16, 185, 129, 0.85)'],
+                                borderColor: ['rgba(125, 211, 252, 1)', 'rgba(110, 231, 183, 1)'],
+                                borderWidth: 2,
+                                hoverOffset: 6,
+                            }
+                        ]
+                    },
+                    options: {
+                        responsive: true,
+                        maintainAspectRatio: false,
+                        plugins: {
+                            legend: { position: 'bottom' },
+                            tooltip: {
+                                callbacks: {
+                                    label: (ctx) => {
+                                        return `${ctx.label}: ${Number(ctx.raw).toFixed(1)}%`;
                                     }
-                                    return `${ctx.label}: ${Number(ctx.raw).toFixed(1)}%`;
                                 }
                             }
-                        }
-                    },
-                }
-            });
+                        },
+                    }
+                });
+            }
         }
     }
 });

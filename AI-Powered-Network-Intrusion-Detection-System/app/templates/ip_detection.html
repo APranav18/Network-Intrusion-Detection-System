@@ -2,6 +2,420 @@
 
 {% block title %}IP Detection & Analysis - AI-NIDS{% endblock %}
 
+{% block extra_css %}
+<style>
+    #singleResultsSection {
+        animation: slideDown 0.5s ease-out;
+    }
+
+    @keyframes slideDown {
+        from {
+            opacity: 0;
+            transform: translateY(-20px);
+        }
+        to {
+            opacity: 1;
+            transform: translateY(0);
+        }
+    }
+
+    .ip-results-container {
+        background: linear-gradient(135deg, #0f1419 0%, #1a1f2e 50%, #0d1b2a 100%);
+        border-radius: 20px;
+        padding: 40px;
+        margin-bottom: 30px;
+        box-shadow: 0 20px 60px rgba(0, 0, 0, 0.7), 0 0 40px rgba(30, 144, 255, 0.1);
+        border: 2px solid rgba(30, 144, 255, 0.2);
+        position: relative;
+        overflow: hidden;
+    }
+
+    .ip-results-container::before {
+        content: '';
+        position: absolute;
+        top: 0;
+        left: 0;
+        right: 0;
+        height: 4px;
+        background: linear-gradient(90deg, #1e90ff, #00bfff, #1e90ff);
+        background-size: 200% 100%;
+        animation: shimmerMove 4s ease-in-out infinite;
+    }
+
+    @keyframes shimmerMove {
+        0%, 100% { background-position: 0% 0%; }
+        50% { background-position: 100% 0%; }
+    }
+
+    .ip-display-header {
+        text-align: center;
+        margin-bottom: 3rem;
+        padding-bottom: 0;
+        border-bottom: none;
+        animation: fadeInDown 1s ease;
+    }
+
+    .ip-display-address {
+        font-family: 'JetBrains Mono', monospace;
+        font-size: 4.5rem;
+        font-weight: 900;
+        background: linear-gradient(135deg, #1e90ff 0%, #00bfff 50%, #87ceeb 100%);
+        -webkit-background-clip: text;
+        -webkit-text-fill-color: transparent;
+        background-clip: text;
+        margin-bottom: 1.5rem;
+        letter-spacing: 3px;
+        animation: glowPulseBlue 3s ease-in-out infinite;
+        text-shadow: 0 0 30px rgba(30, 144, 255, 0.3);
+        filter: drop-shadow(0 0 10px rgba(30, 144, 255, 0.3));
+    }
+
+    @keyframes glowPulseBlue {
+        0%, 100% { filter: drop-shadow(0 0 20px rgba(30, 144, 255, 0.3)); }
+        50% { filter: drop-shadow(0 0 40px rgba(30, 144, 255, 0.6)); }
+    }
+
+    .ip-display-meta {
+        display: flex;
+        justify-content: center;
+        flex-wrap: wrap;
+        gap: 1rem;
+        margin-top: 1.5rem;
+        animation: fadeIn 1s ease 0.3s both;
+    }
+
+    .ip-meta-badge {
+        background: rgba(30, 144, 255, 0.1);
+        border: 2px solid rgba(30, 144, 255, 0.4);
+        border-radius: 50px;
+        padding: 0.8rem 1.5rem;
+        font-weight: 700;
+        font-size: 0.95rem;
+        color: rgba(30, 200, 255, 0.95);
+        display: inline-flex;
+        align-items: center;
+        gap: 0.5rem;
+        backdrop-filter: blur(10px);
+        transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+        box-shadow: 0 0 15px rgba(30, 144, 255, 0.1);
+    }
+
+    .ip-meta-badge:hover {
+        background: rgba(30, 144, 255, 0.25);
+        border-color: rgba(30, 144, 255, 0.8);
+        transform: translateY(-3px) scale(1.08);
+        box-shadow: 0 0 30px rgba(30, 144, 255, 0.4);
+        color: #00bfff;
+    }
+
+    .ip-stats-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+        gap: 1.5rem;
+        margin-bottom: 3rem;
+    }
+
+    .ip-stat-card {
+        background: rgba(30, 144, 255, 0.05);
+        border: 2px solid rgba(30, 144, 255, 0.2);
+        border-radius: 18px;
+        padding: 1.8rem;
+        text-align: center;
+        transition: all 0.5s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+        cursor: pointer;
+        animation: slideInUp 0.8s ease;
+        position: relative;
+        overflow: hidden;
+    }
+
+    .ip-stat-card::before {
+        content: '';
+        position: absolute;
+        top: -50%;
+        left: -50%;
+        width: 200%;
+        height: 200%;
+        background: radial-gradient(circle, rgba(30, 144, 255, 0.2) 0%, transparent 70%);
+        opacity: 0;
+        transition: opacity 0.5s ease;
+    }
+
+    .ip-stat-card:hover::before {
+        opacity: 1;
+    }
+
+    .ip-stat-card:hover {
+        transform: translateY(-12px) scale(1.08);
+        background: rgba(30, 144, 255, 0.15);
+        border-color: rgba(30, 144, 255, 0.8);
+        box-shadow: 0 15px 40px rgba(30, 144, 255, 0.25), inset 0 0 20px rgba(30, 144, 255, 0.1);
+    }
+
+    .ip-stat-label {
+        font-size: 0.8rem;
+        text-transform: uppercase;
+        letter-spacing: 0.12em;
+        color: rgba(135, 206, 235, 0.7);
+        margin-bottom: 0.8rem;
+        font-weight: 700;
+    }
+
+    .ip-stat-number {
+        font-size: 2.5rem;
+        font-weight: 900;
+        background: linear-gradient(135deg, #1e90ff, #00bfff);
+        -webkit-background-clip: text;
+        -webkit-text-fill-color: transparent;
+        background-clip: text;
+        font-family: 'JetBrains Mono', monospace;
+        animation: countUpScale 0.6s ease-out;
+    }
+
+    @keyframes countUpScale {
+        from { opacity: 0; transform: scale(0.8); }
+        to { opacity: 1; transform: scale(1); }
+    }
+
+    .ip-panels-container {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+        gap: 2rem;
+    }
+
+    .ip-result-panel {
+        background: rgba(30, 144, 255, 0.03);
+        border: 2px solid rgba(30, 144, 255, 0.1);
+        border-radius: 16px;
+        overflow: hidden;
+        transition: all 0.4s ease;
+        position: relative;
+        backdrop-filter: blur(5px);
+        animation: slideInLeft 1s ease;
+    }
+
+    .ip-result-panel::after {
+        content: '';
+        position: absolute;
+        top: 0;
+        left: 0;
+        right: 0;
+        bottom: 0;
+        background: linear-gradient(135deg, rgba(30, 144, 255, 0.05) 0%, transparent 100%);
+        pointer-events: none;
+    }
+
+    .ip-result-panel:nth-child(2) {
+        animation-delay: 0.2s;
+    }
+
+    .ip-result-panel:nth-child(3) {
+        animation-delay: 0.4s;
+    }
+
+    .ip-result-panel:hover {
+        background: rgba(30, 144, 255, 0.08);
+        border-color: rgba(30, 144, 255, 0.5);
+        box-shadow: 0 10px 40px rgba(30, 144, 255, 0.2);
+        transform: translateY(-5px);
+    }
+
+    .ip-panel-title-row {
+        background: linear-gradient(90deg, rgba(30, 144, 255, 0.2), rgba(0, 191, 255, 0.1));
+        border-bottom: none;
+        padding: 1.5rem;
+        display: flex;
+        align-items: center;
+        gap: 1rem;
+        position: relative;
+        border-left: 4px solid rgba(30, 144, 255, 0.8);
+    }
+
+    .ip-panel-title-row::before {
+        content: '';
+        position: absolute;
+        left: 0;
+        top: 0;
+        bottom: 0;
+        width: 4px;
+        background: linear-gradient(180deg, #1e90ff, #00bfff);
+        animation: slideDownBlue 0.8s ease;
+    }
+
+    @keyframes slideDownBlue {
+        from { height: 0; }
+        to { height: 100%; }
+    }
+
+    .ip-panel-title-icon {
+        font-size: 1.8rem;
+        opacity: 0.95;
+        animation: bounce 2s infinite;
+    }
+
+    @keyframes bounce {
+        0%, 100% { transform: translateY(0); }
+        50% { transform: translateY(-6px); }
+    }
+
+    .ip-panel-title {
+        font-size: 1.2rem;
+        font-weight: 800;
+        color: rgba(0, 191, 255, 0.95);
+        letter-spacing: 1px;
+    }
+
+    .ip-panel-data {
+        padding: 1.8rem;
+        position: relative;
+        z-index: 1;
+    }
+
+    .ip-data-row {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 1rem;
+        margin-bottom: 1.2rem;
+        animation: fadeIn 0.8s ease;
+    }
+
+    .ip-data-row:last-child {
+        margin-bottom: 0;
+    }
+
+    .ip-data-row > div {
+        display: flex;
+        flex-direction: column;
+        padding: 1rem;
+        background: rgba(30, 144, 255, 0.05);
+        border-radius: 10px;
+        border-left: 3px solid rgba(30, 144, 255, 0.3);
+        transition: all 0.3s ease;
+    }
+
+    .ip-data-row > div:hover {
+        background: rgba(30, 144, 255, 0.12);
+        border-left-color: rgba(0, 191, 255, 0.8);
+        transform: translateX(5px);
+    }
+
+    .ip-data-label {
+        font-size: 0.75rem;
+        text-transform: uppercase;
+        letter-spacing: 0.1em;
+        color: rgba(135, 206, 235, 0.6);
+        font-weight: 700;
+        margin-bottom: 0.4rem;
+    }
+
+    .ip-data-value {
+        font-size: 1.1rem;
+        font-weight: 600;
+        color: rgba(0, 191, 255, 0.95);
+        font-family: 'JetBrains Mono', monospace;
+        word-break: break-word;
+    }
+
+    .ip-data-value.accent {
+        background: linear-gradient(135deg, #1e90ff, #00bfff);
+        -webkit-background-clip: text;
+        -webkit-text-fill-color: transparent;
+        background-clip: text;
+        font-size: 1.2rem;
+        font-weight: 700;
+    }
+
+    .ip-data-value.positive {
+        color: #00ff88;
+    }
+
+    .ip-data-value.negative {
+        color: #ff4444;
+    }
+
+    @keyframes fadeIn {
+        from { opacity: 0; }
+        to { opacity: 1; }
+    }
+
+    @keyframes fadeInDown {
+        from {
+            opacity: 0;
+            transform: translateY(-40px);
+        }
+        to {
+            opacity: 1;
+            transform: translateY(0);
+        }
+    }
+
+    @keyframes slideInLeft {
+        from {
+            opacity: 0;
+            transform: translateX(-50px);
+        }
+        to {
+            opacity: 1;
+            transform: translateX(0);
+        }
+    }
+
+    @keyframes slideInUp {
+        from {
+            opacity: 0;
+            transform: translateY(30px);
+        }
+        to {
+            opacity: 1;
+            transform: translateY(0);
+        }
+    }
+
+    @media (max-width: 768px) {
+        .ip-display-address {
+            font-size: 2.8rem;
+        }
+
+        .ip-panels-container {
+            grid-template-columns: 1fr;
+        }
+
+        .ip-data-row {
+            grid-template-columns: 1fr;
+        }
+
+        .ip-stats-grid {
+            grid-template-columns: repeat(2, 1fr);
+        }
+
+        .ip-result-panel {
+            animation: slideInLeft 1s ease;
+        }
+    }
+
+    @media (max-width: 480px) {
+        .ip-display-address {
+            font-size: 2rem;
+        }
+
+        .ip-stats-grid {
+            grid-template-columns: 1fr;
+        }
+
+        .ip-panels-container {
+            grid-template-columns: 1fr;
+        }
+
+        .ip-panel-title {
+            font-size: 1.1rem;
+        }
+
+        .ip-stat-card {
+            padding: 1rem;
+        }
+    }
+</style>
+{% endblock %}
+
 {% block content %}
 <div class="container-fluid mt-4">
     <!-- Header -->
@@ -1157,100 +1571,199 @@ document.addEventListener('DOMContentLoaded', function() {
         const reverseLookup = data.reverse_lookup || {};
         const attackAssessment = data.attack_assessment || {};
 
-        const typeClass = validation.is_private ? 'private' : 
-                         validation.is_reserved ? 'reserved' : 'public';
+        const ipType = validation.is_private ? 'Private' : validation.is_reserved ? 'Reserved' : 'Public';
+        const versionLabel = validation.version || (validation.is_ipv4 ? 'IPv4' : validation.is_ipv6 ? 'IPv6' : 'Unknown');
         const attackStatus = attackAssessment.status || 'unknown';
-        const attackBadgeClass = attackStatus === 'attacked' ? 'danger' : 
-                                attackStatus === 'suspicious' ? 'warning' : 
-                                attackStatus === 'watchlist' ? 'info' : 'success';
         const attackLabel = attackAssessment.status_label || 'No known attack';
-        const attackTypes = (attackAssessment.attack_types || []).slice(0, 3).map(item => item.attack_type).join(', ') || 'None recorded';
 
-        resultsRow.innerHTML = `
-            <div class="col-lg-6 mb-3">
-                <div class="card ip-card ${typeClass}">
-                    <div class="card-body">
-                        <h5>${data.ip}</h5>
-                        <div class="ip-badge ${typeClass}">${classification.type.join(', ')}</div>
-                        <p class="text-muted mb-2">${classification.description}</p>
-                        <small class="d-block">
-                            <strong>Version:</strong> ${validation.version}<br>
-                            <strong>IPv4:</strong> ${validation.is_ipv4 ? '✓' : '✗'}<br>
-                            <strong>IPv6:</strong> ${validation.is_ipv6 ? '✓' : '✗'}
-                        </small>
+        let html = `
+            <div class="col-12">
+                <div class="ip-results-container">
+                    <!-- Header Section -->
+                    <div class="ip-display-header">
+                        <div class="ip-display-address">${data.ip}</div>
+                        <div class="ip-display-meta">
+                            <div class="ip-meta-badge">${ipType === 'Public' ? '🌐' : ipType === 'Private' ? '🔒' : '⚠️'} ${ipType} IP</div>
+                            <div class="ip-meta-badge">${attackStatus === 'attacked' ? '🚨' : '✅'} ${attackLabel}</div>
+                            <div class="ip-meta-badge">📡 ${versionLabel}</div>
+                            <div class="ip-meta-badge">${validation.is_valid ? '✔️' : '❌'} ${validation.is_valid ? 'Valid' : 'Invalid'}</div>
+                        </div>
                     </div>
-                </div>
-            </div>
 
-            ${attackAssessment.available !== false ? `
-            <div class="col-lg-6 mb-3">
-                <div class="card border-${attackBadgeClass}">
-                    <div class="card-header bg-${attackBadgeClass} text-white">
-                        <h6 class="mb-0">🛡 Attack History</h6>
+                    <!-- Stats Grid -->
+                    <div class="ip-stats-grid">
+                        <div class="ip-stat-card">
+                            <div class="ip-stat-label">⚔️ Threat Level</div>
+                            <div class="ip-stat-number">${classification.risk_level || '—'}</div>
+                        </div>
+                        <div class="ip-stat-card">
+                            <div class="ip-stat-label">🎯 Total Alerts</div>
+                            <div class="ip-stat-number">${attackAssessment.total_alert_count ?? 0}</div>
+                        </div>
+                        <div class="ip-stat-card">
+                            <div class="ip-stat-label">📍 Location</div>
+                            <div class="ip-stat-number" style="font-size: 1.8rem;">${geolocation.country ? (geolocation.country_code || geolocation.country.substring(0, 2)) : '—'}</div>
+                        </div>
+                        <div class="ip-stat-card">
+                            <div class="ip-stat-label">🛡️ Status</div>
+                            <div class="ip-stat-number" style="font-size: 1.5rem;">${attackAssessment.attacked ? '⚠️' : '✅'}</div>
+                        </div>
                     </div>
-                    <div class="card-body">
-                        <span class="badge bg-${attackBadgeClass} mb-2">${attackLabel}</span>
-                        <small class="d-block">
-                            <strong>Attacked:</strong> ${attackAssessment.attacked ? 'Yes' : 'No'}<br>
-                            <strong>Source alerts:</strong> ${attackAssessment.source_alert_count ?? 0}<br>
-                            <strong>Destination alerts:</strong> ${attackAssessment.destination_alert_count ?? 0}<br>
-                            <strong>Total alerts:</strong> ${attackAssessment.total_alert_count ?? 0}<br>
-                            <strong>Attack types:</strong> ${attackTypes}
-                            ${attackAssessment.last_seen ? `<br><strong>Last seen:</strong> ${attackAssessment.last_seen}` : ''}
-                            ${attackAssessment.threat_intelligence ? `<br><strong>Threat intel:</strong> ${attackAssessment.threat_intelligence.threat_type || 'Known'}${attackAssessment.threat_intelligence.source ? ` (${attackAssessment.threat_intelligence.source})` : ''}` : ''}
-                        </small>
-                    </div>
-                </div>
-            </div>
-            ` : `
-            <div class="col-lg-6 mb-3">
-                <div class="card border-secondary">
-                    <div class="card-header bg-secondary text-white">
-                        <h6 class="mb-0">🛡 Attack History</h6>
-                    </div>
-                    <div class="card-body">
-                        <small class="text-muted">Attack history lookup is unavailable for this analysis.</small>
-                    </div>
-                </div>
-            </div>
-            `}
 
-            ${geolocation.country ? `
-            <div class="col-lg-6 mb-3">
-                <div class="card">
-                    <div class="card-header">
-                        <h6 class="mb-0">🌍 Geolocation</h6>
-                    </div>
-                    <div class="card-body">
-                        <small>
-                            <strong>Country:</strong> ${geolocation.country} (${geolocation.country_code})<br>
-                            ${geolocation.city ? `<strong>City:</strong> ${geolocation.city}<br>` : ''}
-                            ${geolocation.isp ? `<strong>ISP:</strong> ${geolocation.isp}<br>` : ''}
-                            ${geolocation.organization ? `<strong>Organization:</strong> ${geolocation.organization}<br>` : ''}
-                            ${geolocation.latitude ? `<strong>Coordinates:</strong> ${geolocation.latitude}, ${geolocation.longitude}<br>` : ''}
-                            <strong>Source:</strong> ${geolocation.source || 'Unknown'}
-                        </small>
-                    </div>
-                </div>
-            </div>
-            ` : ''}
+                    <!-- Panels Section -->
+                    <div class="ip-panels-container">
+                        <!-- Security Panel -->
+                        <div class="ip-result-panel">
+                            <div class="ip-panel-title-row">
+                                <span class="ip-panel-title-icon">🛡️</span>
+                                <span class="ip-panel-title">Security Assessment</span>
+                            </div>
+                            <div class="ip-panel-data">
+                                <div class="ip-data-row">
+                                    <div>
+                                        <div class="ip-data-label">Attack Status</div>
+                                        <div class="ip-data-value ${attackAssessment.attacked ? 'negative' : 'positive'}">${attackAssessment.attacked ? '🚨 ATTACKED' : '✅ CLEAN'}</div>
+                                    </div>
+                                    <div>
+                                        <div class="ip-data-label">Risk Level</div>
+                                        <div class="ip-data-value accent">${classification.risk_level || 'Unknown'}</div>
+                                    </div>
+                                </div>
+                                <div class="ip-data-row">
+                                    <div>
+                                        <div class="ip-data-label">Source Alerts</div>
+                                        <div class="ip-data-value">${attackAssessment.source_alert_count ?? 0}</div>
+                                    </div>
+                                    <div>
+                                        <div class="ip-data-label">Destination Alerts</div>
+                                        <div class="ip-data-value">${attackAssessment.destination_alert_count ?? 0}</div>
+                                    </div>
+                                </div>
+                                <div class="ip-data-row">
+                                    <div>
+                                        <div class="ip-data-label">Total Alerts</div>
+                                        <div class="ip-data-value accent">${attackAssessment.total_alert_count ?? 0}</div>
+                                    </div>
+                                    <div>
+                                        <div class="ip-data-label">Last Seen</div>
+                                        <div class="ip-data-value">${attackAssessment.last_seen || 'N/A'}</div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
 
-            ${reverseLookup.hostname ? `
-            <div class="col-lg-6 mb-3">
-                <div class="card">
-                    <div class="card-header">
-                        <h6 class="mb-0">🔎 Reverse DNS</h6>
-                    </div>
-                    <div class="card-body">
-                        <small>
-                            <strong>Hostname:</strong> ${reverseLookup.hostname}
-                        </small>
+                        <!-- Geolocation Panel -->
+                        <div class="ip-result-panel">
+                            <div class="ip-panel-title-row">
+                                <span class="ip-panel-title-icon">🌍</span>
+                                <span class="ip-panel-title">Geolocation</span>
+                            </div>
+                            <div class="ip-panel-data">
+                                ${geolocation.country ? `
+                                <div class="ip-data-row">
+                                    <div>
+                                        <div class="ip-data-label">Country</div>
+                                        <div class="ip-data-value accent">${geolocation.country}</div>
+                                    </div>
+                                    <div>
+                                        <div class="ip-data-label">Code</div>
+                                        <div class="ip-data-value">${geolocation.country_code || 'N/A'}</div>
+                                    </div>
+                                </div>
+                                ` : ''}
+                                ${geolocation.city ? `
+                                <div class="ip-data-row">
+                                    <div>
+                                        <div class="ip-data-label">City</div>
+                                        <div class="ip-data-value">${geolocation.city}</div>
+                                    </div>
+                                </div>
+                                ` : ''}
+                                ${geolocation.isp ? `
+                                <div class="ip-data-row">
+                                    <div>
+                                        <div class="ip-data-label">ISP</div>
+                                        <div class="ip-data-value">${geolocation.isp}</div>
+                                    </div>
+                                </div>
+                                ` : ''}
+                                ${geolocation.organization ? `
+                                <div class="ip-data-row">
+                                    <div>
+                                        <div class="ip-data-label">Organization</div>
+                                        <div class="ip-data-value">${geolocation.organization}</div>
+                                    </div>
+                                </div>
+                                ` : ''}
+                                ${geolocation.latitude ? `
+                                <div class="ip-data-row">
+                                    <div>
+                                        <div class="ip-data-label">Latitude</div>
+                                        <div class="ip-data-value">${geolocation.latitude.toFixed(4)}</div>
+                                    </div>
+                                    <div>
+                                        <div class="ip-data-label">Longitude</div>
+                                        <div class="ip-data-value">${geolocation.longitude.toFixed(4)}</div>
+                                    </div>
+                                </div>
+                                ` : ''}
+                                ${!geolocation.country ? `<div style="text-align: center; color: rgba(255,255,255,0.5); padding: 1rem;">No geolocation data available</div>` : ''}
+                            </div>
+                        </div>
+
+                        <!-- IP Details Panel -->
+                        <div class="ip-result-panel">
+                            <div class="ip-panel-title-row">
+                                <span class="ip-panel-title-icon">📋</span>
+                                <span class="ip-panel-title">IP Details</span>
+                            </div>
+                            <div class="ip-panel-data">
+                                <div class="ip-data-row">
+                                    <div>
+                                        <div class="ip-data-label">Type</div>
+                                        <div class="ip-data-value accent">${ipType}</div>
+                                    </div>
+                                    <div>
+                                        <div class="ip-data-label">Protocol</div>
+                                        <div class="ip-data-value">${versionLabel}</div>
+                                    </div>
+                                </div>
+                                <div class="ip-data-row">
+                                    <div>
+                                        <div class="ip-data-label">IPv4 Support</div>
+                                        <div class="ip-data-value ${validation.is_ipv4 ? 'positive' : 'negative'}">${validation.is_ipv4 ? '✔️ Yes' : '✘ No'}</div>
+                                    </div>
+                                    <div>
+                                        <div class="ip-data-label">IPv6 Support</div>
+                                        <div class="ip-data-value ${validation.is_ipv6 ? 'positive' : 'negative'}">${validation.is_ipv6 ? '✔️ Yes' : '✘ No'}</div>
+                                    </div>
+                                </div>
+                                <div class="ip-data-row">
+                                    <div>
+                                        <div class="ip-data-label">Validation</div>
+                                        <div class="ip-data-value ${validation.is_valid ? 'positive' : 'negative'}">${validation.is_valid ? '✔️ Valid' : '✘ Invalid'}</div>
+                                    </div>
+                                    <div>
+                                        <div class="ip-data-label">Privacy</div>
+                                        <div class="ip-data-value">${validation.is_private ? '🔒 Private' : '🌐 Public'}</div>
+                                    </div>
+                                </div>
+                                ${reverseLookup.hostname ? `
+                                <div class="ip-data-row">
+                                    <div style="grid-column: 1 / -1;">
+                                        <div class="ip-data-label">Hostname (Reverse DNS)</div>
+                                        <div class="ip-data-value accent">${reverseLookup.hostname}</div>
+                                    </div>
+                                </div>
+                                ` : ''}
+                            </div>
+                        </div>
                     </div>
                 </div>
             </div>
-            ` : ''}
         `;
 
+        resultsRow.innerHTML = html;
         document.getElementById('singleResultsSection').classList.remove('d-none');
     }
 
