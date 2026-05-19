@@ -78,12 +78,6 @@
                 </a>
             </li>
             <li class="nav-item">
-                <a href="{{ url_for('analytics.threat_analytics') }}" class="nav-link {% if request.endpoint == 'analytics.threat_analytics' %}active{% endif %}">
-                    <i class="bi bi-bug"></i>
-                    <span>Threats</span>
-                </a>
-            </li>
-            <li class="nav-item">
                 <a href="{{ url_for('analytics.reports') }}" class="nav-link {% if request.endpoint == 'analytics.reports' %}active{% endif %}">
                     <i class="bi bi-file-earmark-text"></i>
                     <span>Reports</span>

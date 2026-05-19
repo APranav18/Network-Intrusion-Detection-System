@@ -52,24 +52,6 @@ def traffic_analytics():
     )
 
 
-@analytics_bp.route('/threats')
-@login_required
-def threat_analytics():
-    """Threat analysis view."""
-    days = request.args.get('days', 30, type=int)
-    end_date = datetime.utcnow()
-    start_date = end_date - timedelta(days=days)
-    
-    # Get threat data
-    threat_data = get_threat_analytics(start_date, end_date)
-    
-    return render_template(
-        'threat_analytics.html',
-        threat_data=threat_data,
-        days=days
-    )
-
-
 @analytics_bp.route('/reports')
 @login_required
 def reports():
