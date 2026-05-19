@@ -11,7 +11,7 @@ import logging
 
 from app import db
 from app.models.database import Alert, NetworkFlow, ThreatIntelligence
-from utils.ip_detector import analyze_ip, validate_ip, extract_ips, IPValidator
+from utils.ip_detector import analyze_ip, validate_ip, IPValidator
 from utils.internal_pagespeed import analyze_url_internal
 
 logger = logging.getLogger(__name__)
@@ -23,7 +23,10 @@ ip_detection_bp = Blueprint('ip_detection', __name__, url_prefix='/ip-detection'
 @login_required
 def ip_detection_dashboard():
     """IP detection and analysis dashboard."""
-    return render_template('ip_detection.html')
+    # If an IP is provided as a query parameter, pass it to the template so
+    # the page can auto-run a lookup client-side.
+    initial_ip = (request.args.get('ip') or '').strip()
+    return render_template('ip_detection.html', initial_ip=initial_ip)
 
 
 @ip_detection_bp.route('/analyze', methods=['POST'])
@@ -277,106 +280,6 @@ def seed_demo_data():
         return jsonify({'success': False, 'error': str(e)}), 500
 
 
-@ip_detection_bp.route('/live-status')
-@login_required
-def live_status():
-    """Return live monitoring status and latest realtime IP alerts."""
-    try:
-        capture_manager = getattr(current_app, 'live_capture_manager', None)
-    except Exception:
-        capture_manager = None
-
-    live_alerts = Alert.query.filter_by(model_used='realtime-ip').order_by(Alert.timestamp.desc()).limit(10).all()
-
-    return jsonify({
-        'success': True,
-        'running': bool(getattr(capture_manager, 'is_running', False)),
-        'alert_count': len(live_alerts),
-        'alerts': [
-            {
-                'id': alert.id,
-                'timestamp': alert.timestamp.isoformat() if alert.timestamp else None,
-                'source_ip': alert.source_ip,
-                'destination_ip': alert.destination_ip,
-                'source_port': alert.source_port,
-                'destination_port': alert.destination_port,
-                'protocol': alert.protocol,
-                'attack_type': alert.attack_type,
-                'severity': alert.severity,
-                'confidence': alert.confidence,
-                'risk_score': alert.risk_score,
-                'description': alert.description,
-            }
-            for alert in live_alerts
-        ]
-    })
-
-
-@ip_detection_bp.route('/analyze-multiple', methods=['POST'])
-@login_required
-def analyze_multiple_ips():
-    """
-    Analyze multiple IP addresses.
-    
-    Request JSON:
-    {
-        "ips": ["8.8.8.8", "1.1.1.1"],
-        "use_cache": true
-    }
-    """
-    data = request.get_json() or {}
-    ips = data.get('ips', [])
-    use_cache = data.get('use_cache', True)
-    
-    if not isinstance(ips, list) or not ips:
-        return jsonify({'error': 'ips must be a non-empty list'}), 400
-    
-    # Validate all IPs
-    invalid_ips = [ip for ip in ips if not validate_ip(ip)]
-    if invalid_ips:
-        return jsonify({'error': f'Invalid IP addresses: {", ".join(invalid_ips)}'}), 400
-    
-    try:
-        results = {
-            'ips': ips,
-            'results': [analyze_ip(ip, use_cache=use_cache) for ip in ips],
-            'count': len(ips)
-        }
-        return jsonify(results)
-    except Exception as e:
-        logger.error(f"Multiple IP analysis error: {e}")
-        return jsonify({'error': str(e)}), 500
-
-
-@ip_detection_bp.route('/extract', methods=['POST'])
-@login_required
-def extract_ips_from_text():
-    """
-    Extract IP addresses from text.
-    
-    Request JSON:
-    {
-        "text": "Server at 8.8.8.8 and 1.1.1.1 are down"
-    }
-    """
-    data = request.get_json() or {}
-    text = data.get('text', '')
-    
-    if not text:
-        return jsonify({'error': 'text is required'}), 400
-    
-    try:
-        ips = extract_ips(text)
-        return jsonify({
-            'text': text,
-            'ips_found': ips,
-            'count': len(ips)
-        })
-    except Exception as e:
-        logger.error(f"IP extraction error: {e}")
-        return jsonify({'error': str(e)}), 500
-
-
 @ip_detection_bp.route('/validate', methods=['POST'])
 @login_required
 def validate_ip_address():
@@ -410,89 +313,6 @@ def validate_ip_address():
         'is_private': IPValidator.is_private_ip(ip) if is_valid else None,
         'is_reserved': IPValidator.is_reserved_ip(ip) if is_valid else None,
     })
-
-
-@ip_detection_bp.route('/batch', methods=['POST'])
-@login_required
-def batch_analysis():
-    """
-    Batch analyze IPs from text or list.
-    
-    Request JSON:
-    {
-        "input": "8.8.8.8 1.1.1.1 or newline-separated or space-separated",
-        "use_cache": true
-    }
-    """
-    data = request.get_json() or {}
-    input_text = data.get('input', '')
-    use_cache = data.get('use_cache', True)
-    
-    if not input_text:
-        return jsonify({'error': 'input is required'}), 400
-    
-    try:
-        # Extract IPs from text
-        ips = extract_ips(input_text)
-        
-        if not ips:
-            return jsonify({
-                'error': 'No IP addresses found in input',
-                'input': input_text
-            }), 400
-        
-        results = {
-            'input': input_text,
-            'ips_found': ips,
-            'count': len(ips),
-            'analyses': [analyze_ip(ip, use_cache=use_cache) for ip in ips]
-        }
-        return jsonify(results)
-    except Exception as e:
-        logger.error(f"Batch analysis error: {e}")
-        return jsonify({'error': str(e)}), 500
-
-
-@ip_detection_bp.route('/comparison', methods=['POST'])
-@login_required
-def compare_ips():
-    """
-    Compare multiple IP addresses side-by-side.
-    
-    Request JSON:
-    {
-        "ips": ["8.8.8.8", "1.1.1.1", "192.168.1.1"],
-        "use_cache": true
-    }
-    """
-    data = request.get_json() or {}
-    ips = data.get('ips', [])
-    use_cache = data.get('use_cache', True)
-    
-    if not isinstance(ips, list) or len(ips) < 2:
-        return jsonify({'error': 'At least 2 IP addresses required for comparison'}), 400
-    
-    try:
-        analyses = [analyze_ip(ip, use_cache=use_cache) for ip in ips]
-        
-        # Extract comparable fields
-        comparison = {
-            'ips': ips,
-            'analyses': analyses,
-            'summary': {
-                'all_public': all(not a['validation']['is_private'] for a in analyses),
-                'all_private': all(a['validation']['is_private'] for a in analyses),
-                'mixed': not all(not a['validation']['is_private'] for a in analyses) and \
-                         not all(a['validation']['is_private'] for a in analyses),
-                'same_country': len(set(a.get('geolocation', {}).get('country') for a in analyses)) == 1 \
-                    if analyses[0].get('geolocation', {}).get('country') else False
-            }
-        }
-        
-        return jsonify(comparison)
-    except Exception as e:
-        logger.error(f"IP comparison error: {e}")
-        return jsonify({'error': str(e)}), 500
 
 
 @ip_detection_bp.route('/analyze-domain', methods=['POST'])

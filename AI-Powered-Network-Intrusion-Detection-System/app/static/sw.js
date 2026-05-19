@@ -29,7 +29,6 @@ const STATIC_ASSETS = [
 const DYNAMIC_CACHE_PATTERNS = [
   /\/api\/v1\//,
   /\/dashboard\//,
-  /\/alerts/,
   /\/analytics/
 ];
 
@@ -192,21 +191,21 @@ self.addEventListener('push', (event) => {
   if (!event.data) return;
   
   const data = event.data.json();
-  const options = {
-    body: data.body || 'New security alert detected',
+    const options = {
+    body: data.body || 'New notification',
     icon: '/static/images/icons/icon-192x192.png',
     badge: '/static/images/icons/icon-72x72.png',
     vibrate: [100, 50, 100],
     data: {
-      url: data.url || '/alerts',
+      url: data.url || '/dashboard',
       dateOfArrival: Date.now(),
       primaryKey: data.id || 1
     },
     actions: [
-      { action: 'view', title: 'View Alert', icon: '/static/images/icons/icon-72x72.png' },
+      { action: 'view', title: 'View', icon: '/static/images/icons/icon-72x72.png' },
       { action: 'dismiss', title: 'Dismiss' }
     ],
-    tag: data.tag || 'ai-nids-alert',
+    tag: data.tag || 'ai-nids-notification',
     renotify: true
   };
   
@@ -223,14 +222,14 @@ self.addEventListener('notificationclick', (event) => {
     return;
   }
   
-  const urlToOpen = event.notification.data?.url || '/alerts';
+  const urlToOpen = event.notification.data?.url || '/dashboard';
   
   event.waitUntil(
     clients.matchAll({ type: 'window', includeUncontrolled: true })
       .then((windowClients) => {
         // Check if there's already a window open
         for (const client of windowClients) {
-          if (client.url.includes('/dashboard') || client.url.includes('/alerts')) {
+          if (client.url.includes('/dashboard')) {
             return client.focus();
           }
         }
@@ -242,9 +241,7 @@ self.addEventListener('notificationclick', (event) => {
 
 // Background sync for offline actions
 self.addEventListener('sync', (event) => {
-  if (event.tag === 'sync-alerts') {
-    event.waitUntil(syncAlerts());
-  }
+  // No alert-specific background sync registered
 });
 
 async function syncAlerts() {

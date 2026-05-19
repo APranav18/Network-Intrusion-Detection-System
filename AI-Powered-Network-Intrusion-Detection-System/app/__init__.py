@@ -204,19 +204,15 @@ def register_blueprints(app):
     from app.routes.dashboard import dashboard_bp
     from app.routes.auth import auth_bp
     from app.routes.api import api_bp
-    from app.routes.alerts import alerts_bp
     from app.routes.analytics import analytics_bp
     from app.routes.ai_models import ai_models_bp
-    from app.routes.performance import performance_bp
     from app.routes.ip_detection import ip_detection_bp
     
     app.register_blueprint(dashboard_bp)
     app.register_blueprint(auth_bp, url_prefix='/auth')
     app.register_blueprint(api_bp, url_prefix='/api/v1')
-    app.register_blueprint(alerts_bp, url_prefix='/alerts')
     app.register_blueprint(analytics_bp, url_prefix='/analytics')
     app.register_blueprint(ai_models_bp)
-    app.register_blueprint(performance_bp)
     app.register_blueprint(ip_detection_bp)
     
     # Exempt API blueprints from CSRF protection

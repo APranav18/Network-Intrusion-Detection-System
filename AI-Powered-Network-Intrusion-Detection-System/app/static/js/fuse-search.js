@@ -83,60 +83,37 @@ class NIDSSearch {
     
     async loadSearchData() {
         try {
-            // Fetch alerts and other searchable data
-            const [alertsRes, sourcesRes] = await Promise.allSettled([
-                fetch('/api/v1/alerts?limit=500'),
-                fetch('/api/v1/sources/top?limit=100')
-            ]);
-            
+            // Fetch sources and other searchable data (alerts removed from UI search)
+            const sourcesRes = await fetch('/api/v1/sources/top?limit=100').catch(() => ({ ok: false }));
             const searchData = [];
-            
-            // Process alerts
-            if (alertsRes.status === 'fulfilled' && alertsRes.value.ok) {
-                const alertsData = await alertsRes.value.json();
-                const alerts = alertsData.alerts || alertsData.data || alertsData || [];
-                
-                alerts.forEach(alert => {
-                    searchData.push({
-                        type: 'alert',
-                        id: alert.id,
-                        source_ip: alert.source_ip,
-                        destination_ip: alert.destination_ip,
-                        attack_type: alert.attack_type,
-                        severity: alert.severity,
-                        description: alert.description || '',
-                        timestamp: alert.timestamp,
-                        url: `/alerts/${alert.id}`
-                    });
-                });
-            }
-            
+
             // Process sources
-            if (sourcesRes.status === 'fulfilled' && sourcesRes.value.ok) {
-                const sourcesData = await sourcesRes.value.json();
+            if (sourcesRes && sourcesRes.ok) {
+                const sourcesData = await sourcesRes.json();
                 const sources = sourcesData.sources || sourcesData || [];
-                
+
                 sources.forEach(source => {
+                    const ip = source.ip || source.source_ip;
                     searchData.push({
                         type: 'source',
-                        source_ip: source.ip || source.source_ip,
+                        source_ip: ip,
                         attack_type: 'Source IP',
                         description: `${source.count || 0} alerts from this IP`,
-                        url: `/alerts?source_ip=${source.ip || source.source_ip}`
+                        url: `/ip-detection/?ip=${encodeURIComponent(ip)}`
                     });
                 });
             }
             
             // Add common search terms
             const commonSearches = [
-                { type: 'category', attack_type: 'DDoS', description: 'Distributed Denial of Service attacks', url: '/alerts?attack_type=DDoS' },
-                { type: 'category', attack_type: 'SQL Injection', description: 'SQL Injection attempts', url: '/alerts?attack_type=SQL%20Injection' },
-                { type: 'category', attack_type: 'Brute Force', description: 'Brute force authentication attacks', url: '/alerts?attack_type=Brute%20Force' },
-                { type: 'category', attack_type: 'Port Scan', description: 'Network reconnaissance scans', url: '/alerts?attack_type=Port%20Scan' },
-                { type: 'category', attack_type: 'XSS', description: 'Cross-site scripting attacks', url: '/alerts?attack_type=XSS' },
-                { type: 'category', attack_type: 'Malware', description: 'Malware communication detected', url: '/alerts?attack_type=Malware' },
-                { type: 'severity', severity: 'critical', description: 'All critical severity alerts', url: '/alerts?severity=critical' },
-                { type: 'severity', severity: 'high', description: 'All high severity alerts', url: '/alerts?severity=high' },
+                { type: 'category', attack_type: 'DDoS', description: 'Distributed Denial of Service attacks', url: '/analytics?attack_type=DDoS' },
+                { type: 'category', attack_type: 'SQL Injection', description: 'SQL Injection attempts', url: '/analytics?attack_type=SQL%20Injection' },
+                { type: 'category', attack_type: 'Brute Force', description: 'Brute force authentication attacks', url: '/analytics?attack_type=Brute%20Force' },
+                { type: 'category', attack_type: 'Port Scan', description: 'Network reconnaissance scans', url: '/analytics?attack_type=Port%20Scan' },
+                { type: 'category', attack_type: 'XSS', description: 'Cross-site scripting attacks', url: '/analytics?attack_type=XSS' },
+                { type: 'category', attack_type: 'Malware', description: 'Malware communication detected', url: '/analytics?attack_type=Malware' },
+                { type: 'severity', severity: 'critical', description: 'All critical severity alerts', url: '/analytics?severity=critical' },
+                { type: 'severity', severity: 'high', description: 'All high severity alerts', url: '/analytics?severity=high' },
             ];
             
             searchData.push(...commonSearches);

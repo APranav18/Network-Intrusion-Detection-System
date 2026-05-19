@@ -70,13 +70,7 @@
       "form_factor": "wide",
       "label": "AI-NIDS Dashboard"
     },
-    {
-      "src": "/static/images/screenshots/alerts.png",
-      "sizes": "1280x720",
-      "type": "image/png",
-      "form_factor": "wide",
-      "label": "Security Alerts"
-    }
+    
   ],
   "shortcuts": [
     {
@@ -86,13 +80,7 @@
       "url": "/dashboard",
       "icons": [{ "src": "/static/images/icons/icon-96x96.png", "sizes": "96x96" }]
     },
-    {
-      "name": "Alerts",
-      "short_name": "Alerts",
-      "description": "View security alerts",
-      "url": "/alerts",
-      "icons": [{ "src": "/static/images/icons/icon-96x96.png", "sizes": "96x96" }]
-    },
+    
     {
       "name": "Analytics",
       "short_name": "Analytics",

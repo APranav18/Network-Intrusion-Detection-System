@@ -438,24 +438,6 @@
             </button>
         </li>
         <li class="nav-item" role="presentation">
-            <button class="nav-link" id="batch-tab" data-bs-toggle="tab" data-bs-target="#batch" 
-                    type="button" role="tab">
-                <i class="fas fa-list"></i> Batch Analysis
-            </button>
-        </li>
-        <li class="nav-item" role="presentation">
-            <button class="nav-link" id="extract-tab" data-bs-toggle="tab" data-bs-target="#extract" 
-                    type="button" role="tab">
-                <i class="fas fa-highlighter"></i> Extract from Text
-            </button>
-        </li>
-        <li class="nav-item" role="presentation">
-            <button class="nav-link" id="compare-tab" data-bs-toggle="tab" data-bs-target="#compare" 
-                    type="button" role="tab">
-                <i class="fas fa-columns"></i> Compare IPs
-            </button>
-        </li>
-        <li class="nav-item" role="presentation">
             <button class="nav-link" id="domain-tab" data-bs-toggle="tab" data-bs-target="#domain" 
                     type="button" role="tab">
                 <i class="fas fa-globe"></i> Domain Detection
@@ -465,30 +447,6 @@
 
     <!-- Tab Content -->
     <div class="tab-content">
-        <div class="row mb-4">
-            <div class="col-lg-12">
-                <div class="card shadow-sm border-success">
-                    <div class="card-header bg-dark text-white d-flex justify-content-between align-items-center">
-                        <div>
-                            <h5 class="mb-0"><i class="fas fa-satellite-dish"></i> Live IP Monitoring</h5>
-                            <small class="text-white-50">Realtime alerts from the live capture pipeline</small>
-                        </div>
-                        <span class="badge bg-success" id="liveMonitorStatus">Running...</span>
-                    </div>
-                    <div class="card-body">
-                        <div class="d-flex justify-content-between align-items-center mb-3">
-                            <div>
-                                <strong>Latest live detections</strong>
-                                <div class="text-muted small">Updates automatically every 5 seconds</div>
-                            </div>
-                            <span class="badge bg-secondary" id="liveMonitorCount">0 alerts</span>
-                        </div>
-                        <div id="liveAlertsList" class="list-group small"></div>
-                    </div>
-                </div>
-            </div>
-        </div>
-
         <!-- Single IP Analysis -->
         <div class="tab-pane fade show active" id="single" role="tabpanel">
             <div class="row">
@@ -544,204 +502,12 @@
 
                 <!-- Quick Reference -->
                 <div class="col-lg-4">
-                    <div class="card shadow-sm bg-light mb-3">
-                        <div class="card-header">
-                            <h5 class="mb-0"><i class="fas fa-book"></i> IP Types</h5>
-                        </div>
-                        <div class="card-body small">
-                            <div class="mb-3">
-                                <strong class="text-success">Public IP</strong>
-                                <p class="text-muted mb-1">Routable on the internet</p>
-                                <p class="mb-0"><code>8.8.8.8</code></p>
-                            </div>
-                            <hr/>
-                            <div class="mb-3">
-                                <strong class="text-warning">Private IP</strong>
-                                <p class="text-muted mb-1">RFC 1918 ranges</p>
-                                <p class="mb-0"><code>192.168.1.1</code></p>
-                            </div>
-                            <hr/>
-                            <div>
-                                <strong class="text-danger">Reserved IP</strong>
-                                <p class="text-muted mb-1">Multicast, broadcast</p>
-                                <p class="mb-0"><code>224.0.0.1</code></p>
-                            </div>
-                            <hr/>
-                            <button type="button" class="btn btn-outline-warning w-100" id="seedDemoBtn">
-                                <i class="fas fa-bolt"></i> Load Demo Attack Data
-                            </button>
-                            <small class="text-muted d-block mt-2">
-                                Seeds alerts for 185.220.101.42, 45.33.32.156, and 89.248.165.12
-                            </small>
-                        </div>
-                    </div>
                 </div>
             </div>
 
             <!-- Single IP Results -->
             <div id="singleResultsSection" class="d-none mt-4">
                 <div class="row" id="singleResultsRow"></div>
-            </div>
-        </div>
-
-        <!-- Batch Analysis -->
-        <div class="tab-pane fade" id="batch" role="tabpanel">
-            <div class="row">
-                <div class="col-lg-8">
-                    <div class="card shadow-sm">
-                        <div class="card-header bg-info text-white">
-                            <h5 class="mb-0"><i class="fas fa-list"></i> Batch IP Analysis</h5>
-                        </div>
-                        <div class="card-body">
-                            <form id="batchForm">
-                                <div class="form-group mb-3">
-                                    <label for="batchInput" class="form-label fw-bold">IP Addresses</label>
-                                    <textarea 
-                                        class="form-control" 
-                                        id="batchInput" 
-                                        rows="5"
-                                        placeholder="Enter IPs (space, comma, or newline separated)&#10;e.g.&#10;8.8.8.8 1.1.1.1&#10;192.168.1.1&#10;208.67.222.222"
-                                        required
-                                    ></textarea>
-                                </div>
-
-                                <button type="submit" class="btn btn-info btn-lg w-100">
-                                    <i class="fas fa-play"></i> Analyze All
-                                </button>
-                            </form>
-
-                            <div id="batchLoadingSpinner" class="mt-4 text-center d-none">
-                                <div class="spinner-border text-info" role="status"></div>
-                                <p class="mt-2 text-muted">Analyzing IPs...</p>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-                <div class="col-lg-4">
-                    <div class="card shadow-sm bg-info text-white">
-                        <div class="card-header">
-                            <h5 class="mb-0"><i class="fas fa-lightbulb"></i> Batch Formats</h5>
-                        </div>
-                        <div class="card-body small">
-                            <p class="mb-2"><strong>Space-separated:</strong></p>
-                            <code class="text-light">8.8.8.8 1.1.1.1</code>
-
-                            <p class="mb-2 mt-3"><strong>Newline-separated:</strong></p>
-                            <code class="text-light">8.8.8.8<br/>1.1.1.1<br/>192.168.1.1</code>
-
-                            <p class="mb-2 mt-3"><strong>Comma-separated:</strong></p>
-                            <code class="text-light">8.8.8.8,1.1.1.1</code>
-                        </div>
-                    </div>
-                </div>
-            </div>
-
-            <!-- Batch Results -->
-            <div id="batchResultsSection" class="d-none mt-4">
-                <div class="card shadow-sm">
-                    <div class="card-header">
-                        <h5 class="mb-0">Analysis Results (<span id="batchResultCount">0</span> IPs)</h5>
-                    </div>
-                    <div class="card-body">
-                        <div id="batchResultsTable"></div>
-                    </div>
-                </div>
-            </div>
-        </div>
-
-        <!-- Extract from Text -->
-        <div class="tab-pane fade" id="extract" role="tabpanel">
-            <div class="row">
-                <div class="col-lg-12">
-                    <div class="card shadow-sm">
-                        <div class="card-header bg-warning text-dark">
-                            <h5 class="mb-0"><i class="fas fa-highlighter"></i> Extract IPs from Text</h5>
-                        </div>
-                        <div class="card-body">
-                            <form id="extractForm">
-                                <div class="form-group mb-3">
-                                    <label for="extractInput" class="form-label fw-bold">Text Content</label>
-                                    <textarea 
-                                        class="form-control" 
-                                        id="extractInput" 
-                                        rows="6"
-                                        placeholder="Paste logs, error messages, or any text containing IP addresses"
-                                        required
-                                    ></textarea>
-                                </div>
-
-                                <button type="submit" class="btn btn-warning btn-lg w-100">
-                                    <i class="fas fa-play"></i> Extract & Analyze
-                                </button>
-                            </form>
-
-                            <div id="extractLoadingSpinner" class="mt-4 text-center d-none">
-                                <div class="spinner-border text-warning" role="status"></div>
-                                <p class="mt-2 text-muted">Extracting IPs...</p>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </div>
-
-            <!-- Extract Results -->
-            <div id="extractResultsSection" class="d-none mt-4">
-                <div class="card shadow-sm">
-                    <div class="card-header">
-                        <h5 class="mb-0">Extracted IPs (<span id="extractCount">0</span>)</h5>
-                    </div>
-                    <div class="card-body">
-                        <div id="extractedIPsList" class="mb-3"></div>
-                        <button id="analyzeExtractedBtn" class="btn btn-success">Analyze All Extracted IPs</button>
-                    </div>
-                </div>
-
-                <div id="extractAnalysisResults" class="mt-4"></div>
-            </div>
-        </div>
-
-        <!-- Compare IPs -->
-        <div class="tab-pane fade" id="compare" role="tabpanel">
-            <div class="row">
-                <div class="col-lg-8">
-                    <div class="card shadow-sm">
-                        <div class="card-header bg-primary text-white">
-                            <h5 class="mb-0"><i class="fas fa-columns"></i> Compare IP Addresses</h5>
-                        </div>
-                        <div class="card-body">
-                            <form id="compareForm">
-                                <div id="compareInputs">
-                                    <div class="form-group mb-3">
-                                        <label class="form-label fw-bold">IP Address 1</label>
-                                        <input type="text" class="form-control compare-ip" placeholder="8.8.8.8" required>
-                                    </div>
-                                    <div class="form-group mb-3">
-                                        <label class="form-label fw-bold">IP Address 2</label>
-                                        <input type="text" class="form-control compare-ip" placeholder="1.1.1.1" required>
-                                    </div>
-                                </div>
-
-                                <button type="button" class="btn btn-sm btn-outline-primary mb-3" id="addCompareBtn">
-                                    <i class="fas fa-plus"></i> Add IP
-                                </button>
-
-                                <button type="submit" class="btn btn-primary btn-lg w-100">
-                                    <i class="fas fa-play"></i> Compare
-                                </button>
-                            </form>
-
-                            <div id="compareLoadingSpinner" class="mt-4 text-center d-none">
-                                <div class="spinner-border text-primary" role="status"></div>
-                                <p class="mt-2 text-muted">Comparing IPs...</p>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </div>
-
-            <!-- Comparison Results -->
-            <div id="compareResultsSection" class="d-none mt-4">
-                <div id="comparisonResults"></div>
             </div>
         </div>
 
@@ -881,23 +647,6 @@
         padding: 1rem;
         border-radius: 0.25rem;
         margin-top: 1rem;
-    }
-
-    .comparison-table {
-        width: 100%;
-        margin-top: 1rem;
-    }
-
-    .comparison-table th {
-        background-color: #f8f9fa;
-        font-weight: 600;
-        padding: 0.75rem;
-        border: 1px solid #dee2e6;
-    }
-
-    .comparison-table td {
-        padding: 0.75rem;
-        border: 1px solid #dee2e6;
     }
 
     .psi-kpi {
@@ -1377,54 +1126,15 @@ document.addEventListener('DOMContentLoaded', function() {
         });
     });
 
-    loadLiveIPAlerts();
-    setInterval(loadLiveIPAlerts, 5000);
-
     // Single IP Analysis
     document.getElementById('singleIPForm').addEventListener('submit', (e) => {
         e.preventDefault();
         analyzeSingleIP();
     });
 
-    // Batch Analysis
-    document.getElementById('batchForm').addEventListener('submit', (e) => {
-        e.preventDefault();
-        analyzeBatchIPs();
-    });
-
-    // Extract from Text
-    document.getElementById('extractForm').addEventListener('submit', (e) => {
-        e.preventDefault();
-        extractIPsFromText();
-    });
-
-    // Compare IPs
-    document.getElementById('compareForm').addEventListener('submit', (e) => {
-        e.preventDefault();
-        compareIPs();
-    });
-
     document.getElementById('domainForm').addEventListener('submit', (e) => {
         e.preventDefault();
         analyzeDomainDetection();
-    });
-
-    document.getElementById('seedDemoBtn').addEventListener('click', () => {
-        seedDemoAttackData();
-    });
-
-    document.getElementById('addCompareBtn').addEventListener('click', () => {
-        const input = document.createElement('div');
-        input.className = 'form-group mb-3 compare-ip-group';
-        input.innerHTML = `
-            <div class="input-group">
-                <input type="text" class="form-control compare-ip" placeholder="IP Address">
-                <button type="button" class="btn btn-outline-danger" onclick="this.parentElement.parentElement.remove()">
-                    <i class="fas fa-trash"></i>
-                </button>
-            </div>
-        `;
-        document.getElementById('compareInputs').appendChild(input);
     });
 
     function showError(message) {
@@ -1445,83 +1155,6 @@ document.addEventListener('DOMContentLoaded', function() {
         const errorAlert = document.getElementById('errorAlert');
         errorAlert.classList.remove('alert-success');
         errorAlert.classList.add('alert-danger');
-    }
-
-    function loadLiveIPAlerts() {
-        fetch('/ip-detection/live-status')
-        .then(r => r.json())
-        .then(data => {
-            if (!data.success) {
-                return;
-            }
-
-            const statusBadge = document.getElementById('liveMonitorStatus');
-            const liveCount = document.getElementById('liveMonitorCount');
-            const alertsList = document.getElementById('liveAlertsList');
-
-            statusBadge.className = data.running ? 'badge bg-success' : 'badge bg-warning text-dark';
-            statusBadge.textContent = data.running ? 'Running' : 'Stopped';
-            liveCount.textContent = `${data.alert_count || 0} alerts`;
-
-            const alerts = data.alerts || [];
-            if (!alerts.length) {
-                alertsList.innerHTML = `
-                    <div class="list-group-item text-muted">
-                        No live detections yet.
-                    </div>
-                `;
-                return;
-            }
-
-            alertsList.innerHTML = alerts.map(alert => `
-                <div class="list-group-item d-flex justify-content-between align-items-start">
-                    <div class="me-3">
-                        <div class="fw-bold">${alert.source_ip} → ${alert.destination_ip}</div>
-                        <div class="text-muted">
-                            ${alert.attack_type || 'Realtime IP Reputation'} • ${alert.severity || 'medium'} • ${alert.description || ''}
-                        </div>
-                    </div>
-                    <div class="text-end small text-muted">
-                        <div>${alert.timestamp ? new Date(alert.timestamp).toLocaleTimeString() : ''}</div>
-                        <div>${(alert.risk_score ?? 0).toFixed ? Number(alert.risk_score || 0).toFixed(2) : alert.risk_score}</div>
-                    </div>
-                </div>
-            `).join('');
-        })
-        .catch(() => {
-            const statusBadge = document.getElementById('liveMonitorStatus');
-            if (statusBadge) {
-                statusBadge.className = 'badge bg-danger';
-                statusBadge.textContent = 'Unavailable';
-            }
-        });
-    }
-
-    function seedDemoAttackData() {
-        const btn = document.getElementById('seedDemoBtn');
-        btn.disabled = true;
-        btn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Seeding...';
-        resetAlertBox();
-        document.getElementById('errorAlert').classList.add('d-none');
-
-        fetch('/ip-detection/seed-demo-data', {
-            method: 'POST',
-            headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({})
-        })
-        .then(r => r.json())
-        .then(data => {
-            if (data.success) {
-                showSuccess(`Demo data seeded. Try ${data.sample_ips.join(', ')}.`);
-            } else {
-                showError(data.error || 'Could not seed demo data');
-            }
-        })
-        .catch(e => showError('Network error: ' + e.message))
-        .finally(() => {
-            btn.disabled = false;
-            btn.innerHTML = '<i class="fas fa-bolt"></i> Load Demo Attack Data';
-        });
     }
 
     function analyzeSingleIP() {
@@ -1554,6 +1187,19 @@ document.addEventListener('DOMContentLoaded', function() {
             spinner.classList.add('d-none');
             showError('Network error: ' + e.message);
         });
+    }
+
+    // Auto-run analysis when `initial_ip` provided via server-side rendering
+    const initialIP = '{{ initial_ip|default("") }}';
+    if (initialIP) {
+        const ipField = document.getElementById('ipInput');
+        if (ipField) {
+            ipField.value = initialIP;
+            // small delay to ensure UI is ready
+            setTimeout(() => {
+                analyzeSingleIP();
+            }, 200);
+        }
     }
 
     function displaySingleResult(data) {
@@ -1765,212 +1411,6 @@ document.addEventListener('DOMContentLoaded', function() {
 
         resultsRow.innerHTML = html;
         document.getElementById('singleResultsSection').classList.remove('d-none');
-    }
-
-    function analyzeBatchIPs() {
-        const input = document.getElementById('batchInput').value.trim();
-        if (!input) return;
-
-        const spinner = document.getElementById('batchLoadingSpinner');
-        const resultsSection = document.getElementById('batchResultsSection');
-        
-        spinner.classList.remove('d-none');
-        resultsSection.classList.add('d-none');
-
-        fetch('/ip-detection/batch', {
-            method: 'POST',
-            headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({ input })
-        })
-        .then(r => r.json())
-        .then(data => {
-            spinner.classList.add('d-none');
-            if (data.error) {
-                showError(data.error);
-            } else {
-                displayBatchResults(data);
-            }
-        })
-        .catch(e => {
-            spinner.classList.add('d-none');
-            showError('Network error: ' + e.message);
-        });
-    }
-
-    function displayBatchResults(data) {
-        document.getElementById('batchResultCount').textContent = data.count;
-        const table = document.getElementById('batchResultsTable');
-        
-        let html = '<table class="table table-sm table-hover"><thead><tr>' +
-                   '<th>IP</th><th>Type</th><th>Attack Status</th><th>Country</th><th>City</th><th>ISP</th></tr></thead><tbody>';
-
-        data.analyses.forEach(a => {
-            const validation = a.validation || {};
-            const classification = a.classification || {};
-            const geo = a.geolocation || {};
-            const attackAssessment = a.attack_assessment || {};
-            const typeClass = validation.is_private ? 'private' : 
-                             validation.is_reserved ? 'reserved' : 'public';
-            const attackClass = attackAssessment.status === 'attacked' ? 'danger' :
-                               attackAssessment.status === 'suspicious' ? 'warning' :
-                               attackAssessment.status === 'watchlist' ? 'info' : 'success';
-
-            html += `<tr>
-                <td><strong>${a.ip}</strong></td>
-                <td><span class="badge bg-${typeClass === 'public' ? 'success' : typeClass === 'private' ? 'warning' : 'danger'}">
-                    ${classification.type.join(', ')}</span></td>
-                <td><span class="badge bg-${attackClass}">${attackAssessment.status_label || 'No known attack'}</span></td>
-                <td>${geo.country || '-'}</td>
-                <td>${geo.city || '-'}</td>
-                <td>${geo.isp || '-'}</td>
-            </tr>`;
-        });
-
-        html += '</tbody></table>';
-        table.innerHTML = html;
-        resultsSection.classList.remove('d-none');
-    }
-
-    function extractIPsFromText() {
-        const text = document.getElementById('extractInput').value.trim();
-        if (!text) return;
-
-        const spinner = document.getElementById('extractLoadingSpinner');
-        spinner.classList.remove('d-none');
-
-        fetch('/ip-detection/extract', {
-            method: 'POST',
-            headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({ text })
-        })
-        .then(r => r.json())
-        .then(data => {
-            spinner.classList.add('d-none');
-            if (data.error) {
-                showError(data.error);
-            } else {
-                displayExtractedIPs(data);
-            }
-        })
-        .catch(e => {
-            spinner.classList.add('d-none');
-            showError('Network error: ' + e.message);
-        });
-    }
-
-    function displayExtractedIPs(data) {
-        document.getElementById('extractCount').textContent = data.count;
-        const list = document.getElementById('extractedIPsList');
-        
-        let html = '<div class="d-flex flex-wrap gap-2">';
-        data.ips_found.forEach(ip => {
-            html += `<span class="badge bg-primary fs-6" style="padding: 0.5rem 0.75rem;">${ip}</span>`;
-        });
-        html += '</div>';
-
-        list.innerHTML = html;
-
-        document.getElementById('analyzeExtractedBtn').addEventListener('click', () => {
-            analyzeExtractedIPs(data.ips_found);
-        });
-
-        document.getElementById('extractResultsSection').classList.remove('d-none');
-    }
-
-    function analyzeExtractedIPs(ips) {
-        fetch('/ip-detection/analyze-multiple', {
-            method: 'POST',
-            headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({ ips })
-        })
-        .then(r => r.json())
-        .then(data => {
-            displayBatchResults({ analyses: data.results, count: ips.length });
-            document.getElementById('extractAnalysisResults').innerHTML = 
-                document.getElementById('batchResultsTable').parentElement.innerHTML;
-        })
-        .catch(e => showError('Network error: ' + e.message));
-    }
-
-    function compareIPs() {
-        const inputs = document.querySelectorAll('.compare-ip');
-        const ips = Array.from(inputs).map(i => i.value.trim()).filter(i => i);
-
-        if (ips.length < 2) {
-            showError('Please enter at least 2 IP addresses');
-            return;
-        }
-
-        const spinner = document.getElementById('compareLoadingSpinner');
-        const resultsSection = document.getElementById('compareResultsSection');
-        
-        spinner.classList.remove('d-none');
-        resultsSection.classList.add('d-none');
-
-        fetch('/ip-detection/comparison', {
-            method: 'POST',
-            headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({ ips })
-        })
-        .then(r => r.json())
-        .then(data => {
-            spinner.classList.add('d-none');
-            if (data.error) {
-                showError(data.error);
-            } else {
-                displayComparison(data);
-            }
-        })
-        .catch(e => {
-            spinner.classList.add('d-none');
-            showError('Network error: ' + e.message);
-        });
-    }
-
-    function displayComparison(data) {
-        let html = '<div class="row">';
-        
-        data.analyses.forEach((a, idx) => {
-            const validation = a.validation || {};
-            const geo = a.geolocation || {};
-            const attackAssessment = a.attack_assessment || {};
-            const typeClass = validation.is_private ? 'private' : 
-                             validation.is_reserved ? 'reserved' : 'public';
-            const attackClass = attackAssessment.status === 'attacked' ? 'danger' :
-                               attackAssessment.status === 'suspicious' ? 'warning' :
-                               attackAssessment.status === 'watchlist' ? 'info' : 'success';
-
-            html += `<div class="col-md-${Math.floor(12 / data.ips.length)} mb-3">
-                <div class="card ip-card ${typeClass}">
-                    <div class="card-body">
-                        <h6>${a.ip}</h6>
-                        <span class="badge bg-${attackClass} mb-2">${attackAssessment.status_label || 'No known attack'}</span><br>
-                        <small>
-                            <strong>Type:</strong> ${validation.is_private ? 'Private' : validation.is_reserved ? 'Reserved' : 'Public'}<br>
-                            <strong>Attacked:</strong> ${attackAssessment.attacked ? 'Yes' : 'No'}<br>
-                            ${geo.country ? `<strong>Country:</strong> ${geo.country}<br>` : ''}
-                            ${geo.city ? `<strong>City:</strong> ${geo.city}<br>` : ''}
-                            ${geo.isp ? `<strong>ISP:</strong> ${geo.isp}<br>` : ''}
-                        </small>
-                    </div>
-                </div>
-            </div>`;
-        });
-
-        html += '</div>';
-
-        const summary = data.summary || {};
-        if (summary) {
-            html += '<div class="alert alert-info mt-3">';
-            if (summary.all_public) html += '<i class="fas fa-globe"></i> All addresses are public<br>';
-            if (summary.all_private) html += '<i class="fas fa-lock"></i> All addresses are private<br>';
-            if (summary.mixed) html += '<i class="fas fa-random"></i> Mixed public and private addresses<br>';
-            if (summary.same_country) html += '<i class="fas fa-flag"></i> All from same country<br>';
-            html += '</div>';
-        }
-
-        document.getElementById('comparisonResults').innerHTML = html;
-        document.getElementById('compareResultsSection').classList.remove('d-none');
     }
 
     function analyzeDomainDetection() {
