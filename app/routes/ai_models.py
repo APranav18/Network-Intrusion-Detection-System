@@ -9,8 +9,8 @@ Supports multiple AI platforms:
 - Cloud AI: ChatGPT-4/5, Google Gemini, Claude, Raptor
 """
 
-from flask import Blueprint, jsonify, request, render_template
-from flask_login import login_required, current_user
+from flask import Blueprint, jsonify, request
+from flask_login import login_required
 from app.models.database import db, Alert
 from sqlalchemy import func
 import sys
@@ -109,21 +109,6 @@ def get_all_ai_models():
             **model_config
         })
     return models_list
-
-@ai_models_bp.route('/ai-models')
-@login_required
-def ai_models_page():
-    """AI Models dashboard page."""
-    models = get_all_ai_models()
-    
-    # Calculate stats
-    stats = {
-        'threats_blocked': 1247,
-        'avg_response': '12ms',
-        'accuracy': '99.7%'
-    }
-    
-    return render_template('ai_models.html', models=models, stats=stats)
 
 
 
