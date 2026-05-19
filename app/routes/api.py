@@ -762,7 +762,7 @@ def global_search():
             'icon': 'diagram-3',
             'title': f'{flow.source_ip} → {flow.destination_ip}',
             'subtitle': f'Protocol: {flow.protocol} | Port: {flow.destination_port}',
-            'url': f'/analytics/traffic',
+            'url': f'/analytics',
             'severity': 'info'
         })
     

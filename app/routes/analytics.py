@@ -34,24 +34,6 @@ def analytics_dashboard():
     )
 
 
-@analytics_bp.route('/traffic')
-@login_required
-def traffic_analytics():
-    """Traffic analysis view."""
-    days = request.args.get('days', 7, type=int)
-    end_date = datetime.utcnow()
-    start_date = end_date - timedelta(days=days)
-    
-    # Get traffic data
-    traffic_data = get_traffic_analytics(start_date, end_date)
-    
-    return render_template(
-        'traffic_analytics.html',
-        traffic_data=traffic_data,
-        days=days
-    )
-
-
 @analytics_bp.route('/reports')
 @login_required
 def reports():

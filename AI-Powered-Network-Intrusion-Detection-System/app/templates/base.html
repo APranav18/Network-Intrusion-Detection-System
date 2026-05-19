@@ -72,12 +72,6 @@
                 </a>
             </li>
             <li class="nav-item">
-                <a href="{{ url_for('analytics.traffic_analytics') }}" class="nav-link {% if request.endpoint == 'analytics.traffic_analytics' %}active{% endif %}">
-                    <i class="bi bi-diagram-3"></i>
-                    <span>Traffic</span>
-                </a>
-            </li>
-            <li class="nav-item">
                 <a href="{{ url_for('analytics.reports') }}" class="nav-link {% if request.endpoint == 'analytics.reports' %}active{% endif %}">
                     <i class="bi bi-file-earmark-text"></i>
                     <span>Reports</span>
