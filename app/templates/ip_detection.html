@@ -618,6 +618,100 @@
         color: #495057;
     }
 
+    .container-fluid.mt-4,
+    .container-fluid.py-4 {
+        max-width: 1500px;
+    }
+
+    .container-fluid.mt-4 > .row.mb-4 .col-md-12,
+    .container-fluid.py-4 > .ip-page-hero {
+        background: linear-gradient(135deg, rgba(15, 23, 42, 0.96), rgba(30, 41, 59, 0.9));
+        border: 1px solid rgba(148, 163, 184, 0.16);
+        border-radius: 1rem;
+        padding: 1.15rem 1.25rem;
+        box-shadow: 0 14px 40px rgba(15, 23, 42, 0.14);
+    }
+
+    .nav-tabs,
+    .nav-pills.ip-tabs {
+        border-bottom: 0;
+        gap: 0.5rem;
+    }
+
+    .nav-tabs .nav-link,
+    .nav-pills.ip-tabs .nav-link {
+        border: 1px solid rgba(148, 163, 184, 0.18);
+        border-radius: 999px;
+        background: rgba(15, 23, 42, 0.68);
+        color: #94a3b8;
+        font-weight: 700;
+    }
+
+    .nav-tabs .nav-link.active,
+    .nav-pills.ip-tabs .nav-link.active {
+        background: linear-gradient(135deg, #2563eb, #0ea5e9);
+        color: #ffffff;
+        border-color: transparent;
+        box-shadow: 0 12px 24px rgba(37, 99, 235, 0.25);
+    }
+
+    .tab-content > .tab-pane .card,
+    .tab-content > .tab-pane .ip-section-card,
+    .tab-content > .tab-pane .domain-results-shell,
+    .tab-content > .tab-pane .psi-page-shell {
+        background: rgba(15, 23, 42, 0.72);
+        border: 1px solid rgba(148, 163, 184, 0.16);
+        border-radius: 1rem;
+        overflow: hidden;
+        box-shadow: 0 10px 32px rgba(15, 23, 42, 0.12);
+    }
+
+    .tab-content > .tab-pane .card-header,
+    .tab-content > .tab-pane .card-header.bg-success,
+    .tab-content > .tab-pane .card-header.bg-info,
+    .tab-content > .tab-pane .card-header.bg-warning,
+    .tab-content > .tab-pane .card-header.bg-primary,
+    .tab-content > .tab-pane .card-header.bg-dark {
+        background: linear-gradient(135deg, rgba(30, 41, 59, 0.94), rgba(15, 23, 42, 0.98)) !important;
+        border-bottom: 1px solid rgba(148, 163, 184, 0.14) !important;
+        color: #e2e8f0 !important;
+    }
+
+    .tab-content > .tab-pane .card-body {
+        background: transparent;
+        color: #e2e8f0;
+    }
+
+    .tab-content > .tab-pane .card.shadow-sm.bg-light,
+    .tab-content > .tab-pane .card.shadow-sm.bg-info,
+    .tab-content > .tab-pane .card.shadow-sm.bg-warning {
+        background: rgba(15, 23, 42, 0.72) !important;
+        color: #e2e8f0 !important;
+    }
+
+    .tab-content > .tab-pane .text-muted,
+    .tab-content > .tab-pane .small,
+    .tab-content > .tab-pane .form-label,
+    .tab-content > .tab-pane .form-check-label {
+        color: #cbd5e1 !important;
+    }
+
+    .tab-content > .tab-pane .form-control,
+    .tab-content > .tab-pane textarea.form-control,
+    .tab-content > .tab-pane input.form-control {
+        background: rgba(15, 23, 42, 0.85);
+        border-color: rgba(148, 163, 184, 0.22);
+        color: #e2e8f0;
+    }
+
+    .tab-content > .tab-pane code {
+        background: rgba(30, 41, 59, 0.95);
+        color: #67e8f9;
+        border: 1px solid rgba(96, 165, 250, 0.16);
+        border-radius: 0.4rem;
+        padding: 0.15rem 0.35rem;
+    }
+
     /* Blue animated single IP result theme */
     #singleResultsSection {
         animation: slideDownBlue 0.45s ease-out;
