@@ -2081,6 +2081,9 @@ document.addEventListener('DOMContentLoaded', function() {
         const domainScore = Number.isFinite(Number(data.summary?.performance_score)) ? Math.round(Number(data.summary.performance_score)) : null;
         const domainGrade = data.summary?.grade || 'N/A';
         const scoreSpread = Number.isFinite(Number(data.summary?.score_spread)) ? Number(data.summary.score_spread).toFixed(1) : 'N/A';
+        const mobileScoreValue = Number.isFinite(Number(mobileScore)) ? Number(mobileScore) : 0;
+        const desktopScoreValue = Number.isFinite(Number(desktopScore)) ? Number(desktopScore) : 0;
+        const overviewScore = Number.isFinite(Number(domainScore)) ? Number(domainScore) : mobileScoreValue;
 
         const cwvVerdict = (result) => {
             const fd = result?.field_data?.metrics || {};
@@ -2276,6 +2279,51 @@ document.addEventListener('DOMContentLoaded', function() {
         };
 
         body.innerHTML = `
+            <div class="lh-overview">
+                <div class="text-center">
+                    <div class="lh-score-ring" style="--score: ${Math.max(0, Math.min(100, overviewScore))}">
+                        <div class="score-value">${overviewScore}</div>
+                        <div class="score-label">Performance</div>
+                    </div>
+                </div>
+                <div class="lh-overview-copy">
+                    <h3>Lighthouse-style domain overview</h3>
+                    <p>Mobile and desktop results rendered in a report layout inspired by the uploaded screenshots.</p>
+
+                    <div class="lh-summary-grid">
+                        <div class="lh-summary-card">
+                            <div class="lh-summary-label">Aggregate score</div>
+                            <div class="lh-summary-value ${scoreClass(domainScore ?? mobileScoreValue)}">${domainScore ?? 'N/A'}</div>
+                        </div>
+                        <div class="lh-summary-card">
+                            <div class="lh-summary-label">Mobile score</div>
+                            <div class="lh-summary-value ${scoreClass(mobileScoreValue)}">${mobileScore}</div>
+                        </div>
+                        <div class="lh-summary-card">
+                            <div class="lh-summary-label">Desktop score</div>
+                            <div class="lh-summary-value ${scoreClass(desktopScoreValue)}">${desktopScore}</div>
+                        </div>
+                        <div class="lh-summary-card">
+                            <div class="lh-summary-label">Grade / Spread</div>
+                            <div class="lh-summary-value warn">${domainGrade} · ${scoreSpread}</div>
+                        </div>
+                    </div>
+
+                    <div class="lh-device-preview">
+                        <div class="lh-device-card">
+                            <div class="lh-device-pill"><i class="fas fa-mobile-alt"></i> Mobile</div>
+                            <div class="lh-device-score ${scoreClass(mobileScoreValue)}">${mobileScore}</div>
+                            <div class="lh-device-subtext">Performance-focused mobile audit view</div>
+                        </div>
+                        <div class="lh-device-card">
+                            <div class="lh-device-pill"><i class="fas fa-desktop"></i> Desktop</div>
+                            <div class="lh-device-score ${scoreClass(desktopScoreValue)}">${desktopScore}</div>
+                            <div class="lh-device-subtext">Desktop audit view and comparison summary</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
             <div class="domain-headline mb-3">
                 <div><strong>Domain:</strong> ${data.domain}</div>
                 <div><strong>Resolved URL:</strong> <span class="domain-url">${data.url}</span></div>
