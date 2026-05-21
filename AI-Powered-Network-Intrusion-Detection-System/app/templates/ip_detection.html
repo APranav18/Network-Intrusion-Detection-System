@@ -1473,33 +1473,46 @@ document.addEventListener('DOMContentLoaded', function() {
             body: JSON.stringify({ ip, use_cache: useCache })
         })
         .then(r => r.json().then(data => ({ status: r.status, ok: r.ok, body: data })))
-        .then(({ status, ok, body }) => {
+        .then(async ({ status, ok, body }) => {
             spinner.classList.add('d-none');
             const ipValidationEl = document.getElementById('ipValidationMsg');
             if (ipValidationEl) { ipValidationEl.classList.add('d-none'); ipValidationEl.textContent = ''; }
 
+            // If server responded with non-JSON (e.g., redirect to login or HTML error), handle gracefully
+            const contentType = (body && body.headers && body.headers['content-type']) || '';
+            // Note: fetch in browsers provides headers on Response; here we already parsed body. For robustness, check ok and body
             if (!ok) {
                 const err = (body && body.error) ? String(body.error) : ('Server returned ' + status);
                 if (err.toLowerCase().includes('invalid ip')) {
-                    // show inline validation near the input for better UX
                     if (ipValidationEl) {
                         ipValidationEl.textContent = 'Invalid IP address. Please enter a valid IPv4 or IPv6 address.';
                         ipValidationEl.classList.remove('d-none');
                     }
                     showError('Invalid IP address.');
-                } else {
-                    showError(err);
+                    return;
                 }
+
+                // If response is HTML (not JSON), user likely is not authenticated — show informative message
+                if (status === 302 || status === 401 || (typeof body === 'string' && body.indexOf('<html') !== -1)) {
+                    showError('Authentication required. Please log in and try again.');
+                    return;
+                }
+
+                showError(err);
                 return;
             }
 
             const data = body;
+            if (!data || typeof data !== 'object') {
+                showError('Unexpected server response');
+                return;
+            }
+
             if (data.error) {
                 if (String(data.error).toLowerCase().includes('invalid ip')) {
-                    const ipValidationEl2 = document.getElementById('ipValidationMsg');
-                    if (ipValidationEl2) {
-                        ipValidationEl2.textContent = 'Invalid IP address. Please enter a valid IPv4 or IPv6 address.';
-                        ipValidationEl2.classList.remove('d-none');
+                    if (ipValidationEl) {
+                        ipValidationEl.textContent = 'Invalid IP address. Please enter a valid IPv4 or IPv6 address.';
+                        ipValidationEl.classList.remove('d-none');
                     }
                     showError('Invalid IP address.');
                     return;
