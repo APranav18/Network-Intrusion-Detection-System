@@ -100,6 +100,24 @@
         box-shadow: 0 0 15px rgba(30, 144, 255, 0.1);
     }
 
+    .safety-badge.safe {
+        background: rgba(16, 185, 129, 0.06);
+        border-color: rgba(16, 185, 129, 0.24);
+        color: #7ef3c5;
+    }
+
+    .safety-badge.suspicious {
+        background: rgba(255, 159, 67, 0.06);
+        border-color: rgba(255, 159, 67, 0.24);
+        color: #ffd8b1;
+    }
+
+    .safety-badge.malicious {
+        background: rgba(255, 68, 68, 0.06);
+        border-color: rgba(255, 68, 68, 0.28);
+        color: #ffb6b6;
+    }
+
     .ip-meta-badge:hover {
         background: rgba(255, 68, 68, 0.15);
         border-color: rgba(255, 68, 68, 0.8);
@@ -1515,6 +1533,7 @@ document.addEventListener('DOMContentLoaded', function() {
                         <div class="ip-display-meta">
                             <div class="ip-meta-badge">${ipType === 'Public' ? '🌐' : ipType === 'Private' ? '🔒' : '⚠️'} ${ipType} IP</div>
                             <div class="ip-meta-badge">${attackStatus === 'attacked' ? '🚨' : '✅'} ${attackLabel}</div>
+                            <div class="ip-meta-badge safety-badge ${attackAssessment.safety || 'safe'}">${attackAssessment.safety_label || (attackAssessment.safety === 'malicious' ? 'Malicious' : attackAssessment.safety === 'suspicious' ? 'Suspicious' : 'Safe')}</div>
                             <div class="ip-meta-badge">📡 ${versionLabel}</div>
                             <div class="ip-meta-badge">${validation.is_valid ? '✔️' : '❌'} ${validation.is_valid ? 'Valid' : 'Invalid'}</div>
                         </div>
@@ -1567,6 +1586,16 @@ document.addEventListener('DOMContentLoaded', function() {
                                     <div>
                                         <div class="ip-data-label">Destination Alerts</div>
                                         <div class="ip-data-value">${attackAssessment.destination_alert_count ?? 0}</div>
+                                    </div>
+                                </div>
+                                <div class="ip-data-row">
+                                    <div>
+                                        <div class="ip-data-label">Safety</div>
+                                        <div class="ip-data-value ${attackAssessment.safety === 'malicious' ? 'negative' : attackAssessment.safety === 'suspicious' ? '' : 'positive'}">${attackAssessment.safety_label || 'Unknown'}</div>
+                                    </div>
+                                    <div>
+                                        <div class="ip-data-label">AI Confidence</div>
+                                        <div class="ip-data-value">${Math.round((attackAssessment.realtime_ai_assessment?.probability || attackAssessment.realtime_ai_assessment?.confidence || 0) * 100)}%</div>
                                     </div>
                                 </div>
                                 <div class="ip-data-row">

@@ -689,6 +689,20 @@ class IPAnalyzer:
                 'available': True,
                 'status': final_status,
                 'status_label': final_status_label,
+                'safety': (
+                    'malicious' if final_status == 'attacked' else
+                    'suspicious' if final_status in ('suspicious', 'watchlist') else
+                    'safe'
+                ),
+                'safety_label': (
+                    'Malicious' if final_status == 'attacked' else
+                    'Suspicious' if final_status == 'suspicious' else
+                    'Watchlist' if final_status == 'watchlist' else
+                    'Safe'
+                ),
+                'safety_explanation': (
+                    (realtime_assessment.get('status_label') or '') + (': ' + ', '.join(realtime_assessment.get('evidence', []) ) if realtime_assessment.get('evidence') else '')
+                ),
                 'attacked': final_attacked,
                 'suspicious': final_suspicious,
                 'source_alert_count': source_alert_count,
