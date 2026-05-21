@@ -1483,10 +1483,13 @@ document.addEventListener('DOMContentLoaded', function() {
             // Note: fetch in browsers provides headers on Response; here we already parsed body. For robustness, check ok and body
             if (!ok) {
                 const err = (body && body.error) ? String(body.error) : ('Server returned ' + status);
-                if (err.toLowerCase().includes('invalid ip')) {
+                // Prefer structured code when available
+                const code = body && body.code ? body.code : null;
+                if (code === 'INVALID_IP' || err.toLowerCase().includes('invalid ip')) {
                     if (ipValidationEl) {
-                        ipValidationEl.textContent = 'Invalid IP address. Please enter a valid IPv4 or IPv6 address.';
+                        ipValidationEl.textContent = 'Invalid IP address — enter a valid IPv4 or IPv6 (e.g. 8.8.8.8).';
                         ipValidationEl.classList.remove('d-none');
+                        ipValidationEl.style.fontWeight = '700';
                     }
                     showError('Invalid IP address.');
                     return;
@@ -1509,10 +1512,12 @@ document.addEventListener('DOMContentLoaded', function() {
             }
 
             if (data.error) {
-                if (String(data.error).toLowerCase().includes('invalid ip')) {
+                const code = data.code || null;
+                if (code === 'INVALID_IP' || String(data.error).toLowerCase().includes('invalid ip')) {
                     if (ipValidationEl) {
-                        ipValidationEl.textContent = 'Invalid IP address. Please enter a valid IPv4 or IPv6 address.';
+                        ipValidationEl.textContent = 'Invalid IP address — enter a valid IPv4 or IPv6 (e.g. 8.8.8.8).';
                         ipValidationEl.classList.remove('d-none');
+                        ipValidationEl.style.fontWeight = '700';
                     }
                     showError('Invalid IP address.');
                     return;

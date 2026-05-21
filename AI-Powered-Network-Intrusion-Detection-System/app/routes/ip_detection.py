@@ -49,7 +49,11 @@ def analyze_ip_address():
         return jsonify({'error': 'IP address is required'}), 400
     
     if not validate_ip(ip):
-        return jsonify({'error': f'Invalid IP address: {ip}'}), 400
+        return jsonify({
+            'error': 'Invalid IP address',
+            'code': 'INVALID_IP',
+            'detail': ip
+        }), 400
     
     try:
         result = analyze_ip(ip, use_cache=use_cache)
