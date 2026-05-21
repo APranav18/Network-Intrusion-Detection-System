@@ -37,7 +37,7 @@
         left: 0;
         right: 0;
         height: 4px;
-        background: linear-gradient(90deg, #1e90ff, #00bfff, #1e90ff);
+        background: linear-gradient(90deg, #1e90ff, #ff4444, #1e90ff);
         background-size: 200% 100%;
         animation: shimmerMove 4s ease-in-out infinite;
     }
@@ -59,20 +59,20 @@
         font-family: 'JetBrains Mono', monospace;
         font-size: 4.5rem;
         font-weight: 900;
-        background: linear-gradient(135deg, #1e90ff 0%, #00bfff 50%, #87ceeb 100%);
+        background: linear-gradient(135deg, #1e90ff 0%, #ff4444 50%, #1e90ff 100%);
         -webkit-background-clip: text;
         -webkit-text-fill-color: transparent;
         background-clip: text;
         margin-bottom: 1.5rem;
         letter-spacing: 3px;
-        animation: glowPulseBlue 3s ease-in-out infinite;
+        animation: glowPulseBlueRed 3s ease-in-out infinite;
         text-shadow: 0 0 30px rgba(30, 144, 255, 0.3);
         filter: drop-shadow(0 0 10px rgba(30, 144, 255, 0.3));
     }
 
-    @keyframes glowPulseBlue {
+    @keyframes glowPulseBlueRed {
         0%, 100% { filter: drop-shadow(0 0 20px rgba(30, 144, 255, 0.3)); }
-        50% { filter: drop-shadow(0 0 40px rgba(30, 144, 255, 0.6)); }
+        50% { filter: drop-shadow(0 0 40px rgba(255, 68, 68, 0.6)); }
     }
 
     .ip-display-meta {
@@ -101,11 +101,11 @@
     }
 
     .ip-meta-badge:hover {
-        background: rgba(30, 144, 255, 0.25);
-        border-color: rgba(30, 144, 255, 0.8);
+        background: rgba(255, 68, 68, 0.15);
+        border-color: rgba(255, 68, 68, 0.8);
         transform: translateY(-3px) scale(1.08);
-        box-shadow: 0 0 30px rgba(30, 144, 255, 0.4);
-        color: #00bfff;
+        box-shadow: 0 0 30px rgba(255, 68, 68, 0.4);
+        color: #ff6666;
     }
 
     .ip-stats-grid {
@@ -146,9 +146,9 @@
 
     .ip-stat-card:hover {
         transform: translateY(-12px) scale(1.08);
-        background: rgba(30, 144, 255, 0.15);
-        border-color: rgba(30, 144, 255, 0.8);
-        box-shadow: 0 15px 40px rgba(30, 144, 255, 0.25), inset 0 0 20px rgba(30, 144, 255, 0.1);
+        background: rgba(255, 68, 68, 0.1);
+        border-color: rgba(255, 68, 68, 0.6);
+        box-shadow: 0 15px 40px rgba(255, 68, 68, 0.2), inset 0 0 20px rgba(255, 68, 68, 0.05);
     }
 
     .ip-stat-label {
@@ -163,7 +163,7 @@
     .ip-stat-number {
         font-size: 2.5rem;
         font-weight: 900;
-        background: linear-gradient(135deg, #1e90ff, #00bfff);
+        background: linear-gradient(135deg, #1e90ff, #ff4444);
         -webkit-background-clip: text;
         -webkit-text-fill-color: transparent;
         background-clip: text;
@@ -220,7 +220,7 @@
     }
 
     .ip-panel-title-row {
-        background: linear-gradient(90deg, rgba(30, 144, 255, 0.2), rgba(0, 191, 255, 0.1));
+        background: linear-gradient(90deg, rgba(30, 144, 255, 0.2), rgba(255, 68, 68, 0.1));
         border-bottom: none;
         padding: 1.5rem;
         display: flex;
@@ -237,11 +237,11 @@
         top: 0;
         bottom: 0;
         width: 4px;
-        background: linear-gradient(180deg, #1e90ff, #00bfff);
-        animation: slideDownBlue 0.8s ease;
+        background: linear-gradient(180deg, #1e90ff, #ff4444);
+        animation: slideDownBlueRed 0.8s ease;
     }
 
-    @keyframes slideDownBlue {
+    @keyframes slideDownBlueRed {
         from { height: 0; }
         to { height: 100%; }
     }
@@ -262,6 +262,10 @@
         font-weight: 800;
         color: rgba(0, 191, 255, 0.95);
         letter-spacing: 1px;
+    }
+
+    .ip-panel-title.warning {
+        color: rgba(255, 68, 68, 0.95);
     }
 
     .ip-panel-data {
@@ -293,8 +297,8 @@
     }
 
     .ip-data-row > div:hover {
-        background: rgba(30, 144, 255, 0.12);
-        border-left-color: rgba(0, 191, 255, 0.8);
+        background: rgba(255, 68, 68, 0.12);
+        border-left-color: rgba(255, 68, 68, 0.8);
         transform: translateX(5px);
     }
 
@@ -316,7 +320,7 @@
     }
 
     .ip-data-value.accent {
-        background: linear-gradient(135deg, #1e90ff, #00bfff);
+        background: linear-gradient(135deg, #1e90ff, #ff4444);
         -webkit-background-clip: text;
         -webkit-text-fill-color: transparent;
         background-clip: text;
