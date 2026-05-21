@@ -27,23 +27,7 @@ def index():
 @login_required
 def dashboard():
     """Main dashboard view."""
-    # Get summary statistics
-    stats = get_dashboard_stats()
-    recent_alerts = get_recent_alerts(limit=10)
-    traffic_data = get_traffic_timeline()
-    attack_distribution = get_attack_distribution()
-    top_sources = get_top_source_ips()
-    severity_data = get_severity_breakdown()
-    
-    return render_template(
-        'dashboard.html',
-        stats=stats,
-        recent_alerts=recent_alerts,
-        traffic_data=traffic_data,
-        attack_distribution=attack_distribution,
-        top_sources=top_sources,
-        severity_data=severity_data
-    )
+    return render_template('dashboard.html')
 
 
 @dashboard_bp.route('/dashboard/stats')

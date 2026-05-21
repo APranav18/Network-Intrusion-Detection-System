@@ -9,45 +9,21 @@
     <p class="search-sub">Enter an IP address to analyze</p>
 
     <div class="search-row">
-      <input id="ipInput" type="search" placeholder="e.g. 8.8.8.8 or 185.220.101.42 — press Enter" autofocus />
+      <input id="ipInput" type="search" placeholder="e.g. 8.8.8.8 or 185.220.101.42" autofocus />
       <button id="ipSearchBtn" class="btn btn-red">Lookup</button>
     </div>
   </div>
 </div>
 
 <style>
-/* Compact dashboard minimal styling */
 .compact-dashboard { padding: 1rem; }
-.root-theme { }
-.root-theme { }
 :root {
   --muted-color: #c7c7c9;
-  --card-bg: rgba(18,18,26,0.65);
-  --accent-color: #ff7b7b;
-  --accent-blue:#00f2fe;
-  --accent-green:#00d26a;
-  --danger:#ff4757;
   --accent-red: #ff3b30;
-  --glass-bg: rgba(255, 35, 35, 0.06);
 }
 .btn { background: transparent; border: 1px solid rgba(255,255,255,0.06); padding: 0.4rem 0.7rem; border-radius:4px; color:inherit; }
 .btn-red { background: linear-gradient(90deg,var(--accent-red), #ff6b6b); color: #fff; border: none; padding: 0.9rem 1.2rem; border-radius:8px; font-weight:700; font-size:1rem; box-shadow: 0 6px 18px rgba(255,59,48,0.14); }
 .btn-red:hover { transform: translateY(-1px); box-shadow: 0 10px 26px rgba(255,59,48,0.18); }
-.btn-link { background:none;border:none;color:var(--muted-color);text-decoration:underline;font-size:0.9rem }
-.btn-outline { background:transparent }
-
-/* Stat accents */
-.stat { position:relative; overflow:hidden; }
-.stat:before { content:''; position:absolute; left:0; top:0; bottom:0; width:6px; border-radius:4px 0 0 4px; }
-.stat-flows:before { background: linear-gradient(180deg, var(--accent-blue), #007fae); }
-.stat-alerts:before { background: linear-gradient(180deg, var(--accent-color), #ff7b2e); }
-.stat-critical:before { background: linear-gradient(180deg, var(--danger), #ff6b6b); }
-
-/* Button accents */
-#refreshBtn { border-color: rgba(255,255,255,0.08); }
-#refreshBtn:hover { background: rgba(255,255,255,0.02); border-color: var(--accent-blue); color:var(--accent-blue); }
-
-/* Search shell (glass + red blur theme) */
 .compact-dashboard {
   background: radial-gradient(1200px 400px at 10% 20%, rgba(255,80,80,0.06), transparent),
               radial-gradient(800px 300px at 90% 80%, rgba(255,20,20,0.04), transparent),
@@ -73,24 +49,13 @@
 .search-row input[type="search"]:focus {
   outline: none; border-color: rgba(255,59,48,0.28); box-shadow: 0 10px 30px rgba(255,59,48,0.12), 0 2px 6px rgba(0,0,0,0.6) inset; transform: translateY(-1px);
 }
-
-/* small responsive tweaks */
 @media (max-width: 576px) {
   .search-shell { padding: 1.2rem; }
   .search-row { flex-direction: column; }
   .search-row input[type="search"] { width: 100%; }
   .btn-red { width: 100%; }
 }
-
-/* Recent alert severity colors */
-.recent-severity { font-weight:700; }
-.recent-severity.CRITICAL { color: var(--danger); }
-.recent-severity.HIGH { color: var(--accent-color); }
-.recent-severity.MEDIUM { color: #ffc107; }
-.recent-severity.LOW { color: var(--accent-green); }
-.recent-severity.INFO { color: var(--accent-blue); }
 </style>
-
 {% endblock %}
 
 {% block extra_js %}
@@ -101,7 +66,6 @@ document.addEventListener('DOMContentLoaded', function(){
   function doSearch(){
     const val = input.value && input.value.trim();
     if(!val) return;
-    // redirect to IP detection page (will handle analysis)
     window.location.href = `/ip-detection/?ip=${encodeURIComponent(val)}`;
   }
   btn.addEventListener('click', doSearch);

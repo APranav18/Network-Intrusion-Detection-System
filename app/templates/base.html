@@ -65,31 +65,6 @@
                 </a>
             </li>
             <li class="nav-item">
-                <a href="{{ url_for('alerts.alert_list') }}" class="nav-link {% if 'alerts' in request.endpoint %}active{% endif %}">
-                    <i class="bi bi-bell"></i>
-                    <span>Alerts</span>
-                    <span class="badge bg-danger ms-auto" id="alert-count"></span>
-                </a>
-            </li>
-            <li class="nav-item">
-                <a href="{{ url_for('analytics.analytics_dashboard') }}" class="nav-link {% if request.endpoint == 'analytics.analytics_dashboard' %}active{% endif %}">
-                    <i class="bi bi-bar-chart-line"></i>
-                    <span>Analytics</span>
-                </a>
-            </li>
-            <li class="nav-item">
-                <a href="{{ url_for('analytics.reports') }}" class="nav-link {% if request.endpoint == 'analytics.reports' %}active{% endif %}">
-                    <i class="bi bi-file-earmark-text"></i>
-                    <span>Reports</span>
-                </a>
-            </li>
-            <li class="nav-item">
-                <a href="{{ url_for('performance.performance_dashboard') }}" class="nav-link {% if request.endpoint == 'performance.performance_dashboard' %}active{% endif %}">
-                    <i class="bi bi-speedometer"></i>
-                    <span>Performance</span>
-                </a>
-            </li>
-            <li class="nav-item">
                 <a href="{{ url_for('ip_detection.ip_detection_dashboard') }}" class="nav-link {% if request.endpoint == 'ip_detection.ip_detection_dashboard' %}active{% endif %}">
                     <i class="bi bi-map-marked-alt"></i>
                     <span>IP Detection</span>
@@ -146,7 +121,7 @@
             
             <div class="navbar-search">
                 <i class="bi bi-search"></i>
-                <input type="text" placeholder="Search alerts, IPs... (e.g., 192.168.1.1, 8.8.8.8, malware)" class="form-control" id="global-search">
+                <input type="text" placeholder="Search IPs... (e.g., 192.168.1.1, 8.8.8.8)" class="form-control" id="global-search">
             </div>
             
             <div class="navbar-actions">

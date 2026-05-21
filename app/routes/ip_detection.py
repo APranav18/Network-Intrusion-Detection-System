@@ -11,7 +11,7 @@ import logging
 
 from app import db
 from app.models.database import Alert, NetworkFlow, ThreatIntelligence
-from utils.ip_detector import analyze_ip, validate_ip, extract_ips, IPValidator
+from utils.ip_detector import analyze_ip, validate_ip, IPValidator
 from utils.pagespeed import analyze_url_cached
 
 logger = logging.getLogger(__name__)
@@ -23,7 +23,10 @@ ip_detection_bp = Blueprint('ip_detection', __name__, url_prefix='/ip-detection'
 @login_required
 def ip_detection_dashboard():
     """IP detection and analysis dashboard."""
-    return render_template('ip_detection.html')
+    # Expose PageSpeed API key to template only in safe contexts (debug or explicit flag)
+    pagespeed_key = current_app.config.get('GOOGLE_PAGESPEED_API_KEY')
+    expose_key = current_app.debug or bool(current_app.config.get('EXPOSE_PAGESPEED_KEY', False))
+    return render_template('ip_detection.html', pagespeed_key=(pagespeed_key if expose_key else ''))
 
 
 @ip_detection_bp.route('/analyze', methods=['POST'])
@@ -53,6 +56,41 @@ def analyze_ip_address():
         return jsonify(result)
     except Exception as e:
         logger.error(f"IP analysis error: {e}")
+        return jsonify({'error': str(e), 'success': False}), 500
+
+
+@ip_detection_bp.route('/debug-analyze', methods=['GET', 'POST'])
+def debug_analyze_ip():
+    """
+    Debug endpoint for IP analysis that bypasses login when enabled in config.
+
+    Use only in development. Enable by setting `ALLOW_DEBUG_IP_ANALYZE = True`
+    in the Flask config or running the app with `DEBUG=True`.
+
+    GET: /ip-detection/debug-analyze?ip=8.8.8.8
+    POST JSON: { "ip": "8.8.8.8" }
+    """
+    allowed = current_app.config.get('ALLOW_DEBUG_IP_ANALYZE', False) or current_app.debug
+    if not allowed:
+        return jsonify({'error': 'Debug analyze endpoint is disabled'}), 403
+
+    if request.method == 'POST':
+        data = request.get_json() or {}
+        ip = (data.get('ip') or '').strip()
+    else:
+        ip = (request.args.get('ip') or '').strip()
+
+    if not ip:
+        return jsonify({'error': 'ip is required'}), 400
+
+    if not validate_ip(ip):
+        return jsonify({'error': f'Invalid IP address: {ip}'}), 400
+
+    try:
+        result = analyze_ip(ip, use_cache=False)
+        return jsonify(result)
+    except Exception as e:
+        logger.error(f"Debug IP analysis error: {e}")
         return jsonify({'error': str(e), 'success': False}), 500
 
 
@@ -312,6 +350,81 @@ def live_status():
     })
 
 
+@ip_detection_bp.route('/start-capture', methods=['POST'])
+@login_required
+def start_capture_for_ip():
+    """Start live capture with a BPF filter for a specific IP.
+
+    Request JSON:
+    {
+        "ip": "8.8.8.8",
+        "interface": "Ethernet0",      # optional
+        "timeout": 300                  # optional seconds
+    }
+    """
+    data = request.get_json() or {}
+    ip = (data.get('ip') or '').strip()
+    interface = data.get('interface')
+    timeout = data.get('timeout')
+
+    if not ip:
+        return jsonify({'error': 'ip is required'}), 400
+
+    if not validate_ip(ip):
+        return jsonify({'error': f'Invalid IP address: {ip}'}), 400
+
+    capture_manager = getattr(current_app, 'live_capture_manager', None)
+    if not capture_manager:
+        return jsonify({'error': 'Live capture manager not available. Is Scapy installed and capture enabled?'}), 500
+
+    # Use a BPF host filter to capture traffic for the given IP
+    bpf = f"host {ip}"
+
+    try:
+        started = capture_manager.start_capture(interface=interface, filter=bpf, timeout=timeout)
+        return jsonify({'success': bool(started), 'filter': bpf, 'interface': interface}), (200 if started else 500)
+    except Exception as e:
+        logger.error(f"Failed to start capture for {ip}: {e}")
+        return jsonify({'success': False, 'error': str(e)}), 500
+
+
+@ip_detection_bp.route('/stop-capture', methods=['POST'])
+@login_required
+def stop_capture():
+    """Stop any running live capture."""
+    capture_manager = getattr(current_app, 'live_capture_manager', None)
+    if not capture_manager:
+        return jsonify({'error': 'Live capture manager not available.'}), 500
+
+    try:
+        capture_manager.stop_capture()
+        return jsonify({'success': True}), 200
+    except Exception as e:
+        logger.error(f"Failed to stop capture: {e}")
+        return jsonify({'success': False, 'error': str(e)}), 500
+
+
+@ip_detection_bp.route('/recent-packets')
+@login_required
+def recent_packets():
+    """Return recent captured packets (JSON). Query params: limit (int)"""
+    try:
+        limit = int(request.args.get('limit', 100))
+    except Exception:
+        limit = 100
+
+    capture_manager = getattr(current_app, 'live_capture_manager', None)
+    if not capture_manager:
+        return jsonify({'error': 'Live capture manager not available.'}), 500
+
+    try:
+        packets = capture_manager.get_recent_packets(limit=limit)
+        return jsonify({'success': True, 'count': len(packets), 'packets': packets})
+    except Exception as e:
+        logger.error(f"Failed to get recent packets: {e}")
+        return jsonify({'success': False, 'error': str(e)}), 500
+
+
 @ip_detection_bp.route('/analyze-multiple', methods=['POST'])
 @login_required
 def analyze_multiple_ips():
@@ -348,35 +461,6 @@ def analyze_multiple_ips():
         return jsonify({'error': str(e)}), 500
 
 
-@ip_detection_bp.route('/extract', methods=['POST'])
-@login_required
-def extract_ips_from_text():
-    """
-    Extract IP addresses from text.
-    
-    Request JSON:
-    {
-        "text": "Server at 8.8.8.8 and 1.1.1.1 are down"
-    }
-    """
-    data = request.get_json() or {}
-    text = data.get('text', '')
-    
-    if not text:
-        return jsonify({'error': 'text is required'}), 400
-    
-    try:
-        ips = extract_ips(text)
-        return jsonify({
-            'text': text,
-            'ips_found': ips,
-            'count': len(ips)
-        })
-    except Exception as e:
-        logger.error(f"IP extraction error: {e}")
-        return jsonify({'error': str(e)}), 500
-
-
 @ip_detection_bp.route('/validate', methods=['POST'])
 @login_required
 def validate_ip_address():
@@ -410,89 +494,6 @@ def validate_ip_address():
         'is_private': IPValidator.is_private_ip(ip) if is_valid else None,
         'is_reserved': IPValidator.is_reserved_ip(ip) if is_valid else None,
     })
-
-
-@ip_detection_bp.route('/batch', methods=['POST'])
-@login_required
-def batch_analysis():
-    """
-    Batch analyze IPs from text or list.
-    
-    Request JSON:
-    {
-        "input": "8.8.8.8 1.1.1.1 or newline-separated or space-separated",
-        "use_cache": true
-    }
-    """
-    data = request.get_json() or {}
-    input_text = data.get('input', '')
-    use_cache = data.get('use_cache', True)
-    
-    if not input_text:
-        return jsonify({'error': 'input is required'}), 400
-    
-    try:
-        # Extract IPs from text
-        ips = extract_ips(input_text)
-        
-        if not ips:
-            return jsonify({
-                'error': 'No IP addresses found in input',
-                'input': input_text
-            }), 400
-        
-        results = {
-            'input': input_text,
-            'ips_found': ips,
-            'count': len(ips),
-            'analyses': [analyze_ip(ip, use_cache=use_cache) for ip in ips]
-        }
-        return jsonify(results)
-    except Exception as e:
-        logger.error(f"Batch analysis error: {e}")
-        return jsonify({'error': str(e)}), 500
-
-
-@ip_detection_bp.route('/comparison', methods=['POST'])
-@login_required
-def compare_ips():
-    """
-    Compare multiple IP addresses side-by-side.
-    
-    Request JSON:
-    {
-        "ips": ["8.8.8.8", "1.1.1.1", "192.168.1.1"],
-        "use_cache": true
-    }
-    """
-    data = request.get_json() or {}
-    ips = data.get('ips', [])
-    use_cache = data.get('use_cache', True)
-    
-    if not isinstance(ips, list) or len(ips) < 2:
-        return jsonify({'error': 'At least 2 IP addresses required for comparison'}), 400
-    
-    try:
-        analyses = [analyze_ip(ip, use_cache=use_cache) for ip in ips]
-        
-        # Extract comparable fields
-        comparison = {
-            'ips': ips,
-            'analyses': analyses,
-            'summary': {
-                'all_public': all(not a['validation']['is_private'] for a in analyses),
-                'all_private': all(a['validation']['is_private'] for a in analyses),
-                'mixed': not all(not a['validation']['is_private'] for a in analyses) and \
-                         not all(a['validation']['is_private'] for a in analyses),
-                'same_country': len(set(a.get('geolocation', {}).get('country') for a in analyses)) == 1 \
-                    if analyses[0].get('geolocation', {}).get('country') else False
-            }
-        }
-        
-        return jsonify(comparison)
-    except Exception as e:
-        logger.error(f"IP comparison error: {e}")
-        return jsonify({'error': str(e)}), 500
 
 
 @ip_detection_bp.route('/analyze-domain', methods=['POST'])
@@ -546,15 +547,11 @@ def ip_info():
             'classification': 'Classify as public, private, or reserved',
             'reverse_lookup': 'Perform reverse DNS lookup',
             'attack_history': 'Check recorded alerts and threat intelligence for attack evidence',
-            'batch_analysis': 'Analyze multiple IPs from text',
-            'comparison': 'Compare multiple IPs side-by-side',
             'domain_detection': 'Analyze domain quality with Google PageSpeed (mobile + desktop)',
         },
         'supported_formats': [
             'Single IP: 8.8.8.8',
-            'Multiple IPs space-separated: 8.8.8.8 1.1.1.1',
-            'Multiple IPs newline-separated',
-            'IPv4 and IPv6 mixed'
+            'IPv4 and IPv6 supported'
         ],
         'capabilities': {
             'ipv4': 'Full support',
