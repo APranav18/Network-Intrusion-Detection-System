@@ -31,6 +31,21 @@ def run_playwright_test(url='http://127.0.0.1:5000/ip-detection/'):
     with sync_playwright() as p:
         browser = p.chromium.launch(headless=True)
         page = browser.new_page()
+        # Ensure we're authenticated in browser context: perform login
+        login_url = url.replace('/ip-detection/', '/auth/login')
+        page.goto(login_url, wait_until='domcontentloaded')
+        # Fill login form (WTForms uses name attributes)
+        try:
+            page.fill('input[name="username"]', 'admin')
+            page.fill('input[name="password"]', 'admin123')
+            page.click('button[type=submit]')
+            # wait for navigation or redirect
+            page.wait_for_load_state('networkidle', timeout=5000)
+        except Exception:
+            # If login form not present, continue (maybe app allows anonymous access)
+            pass
+
+        # Now navigate to IP detection page
         page.goto(url, wait_until='domcontentloaded')
 
         # Fill invalid input (alphabetic/random) and submit

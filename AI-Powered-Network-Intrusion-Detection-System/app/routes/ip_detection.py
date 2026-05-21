@@ -402,7 +402,6 @@ def ip_info():
     return jsonify({
         'features': {
             'validation': 'Validate IPv4 and IPv6 addresses',
-            'geolocation': 'Lookup country, city, ISP, and coordinates',
             'classification': 'Classify as public, private, or reserved',
             'reverse_lookup': 'Perform reverse DNS lookup',
             'attack_history': 'Check recorded alerts and threat intelligence for attack evidence',
@@ -421,7 +420,6 @@ def ip_info():
             'ipv6': 'Full support',
             'private_ips': 'Detected (RFC 1918, RFC 4193)',
             'reserved_ips': 'Detected (multicast, broadcast)',
-            'geolocation': 'Public IPs only',
             'attack_history': 'Recorded alerts and threat intel lookup',
             'caching': '1000 entries max'
         }
