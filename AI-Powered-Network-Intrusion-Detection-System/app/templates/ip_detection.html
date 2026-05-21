@@ -488,6 +488,7 @@
                                         placeholder="e.g., 8.8.8.8 or 2001:4860:4860::8888"
                                         required
                                     >
+                                    <div id="ipValidationMsg" class="form-text text-danger mt-1 d-none"></div>
                                     <small class="text-muted d-block mt-2">
                                         <i class="fas fa-info-circle"></i> 
                                         Supports IPv4 and IPv6 addresses
@@ -1471,19 +1472,49 @@ document.addEventListener('DOMContentLoaded', function() {
             headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify({ ip, use_cache: useCache })
         })
-        .then(r => r.json())
-        .then(data => {
+        .then(r => r.json().then(data => ({ status: r.status, ok: r.ok, body: data })))
+        .then(({ status, ok, body }) => {
             spinner.classList.add('d-none');
+            const ipValidationEl = document.getElementById('ipValidationMsg');
+            if (ipValidationEl) { ipValidationEl.classList.add('d-none'); ipValidationEl.textContent = ''; }
+
+            if (!ok) {
+                const err = (body && body.error) ? String(body.error) : ('Server returned ' + status);
+                if (err.toLowerCase().includes('invalid ip')) {
+                    // show inline validation near the input for better UX
+                    if (ipValidationEl) {
+                        ipValidationEl.textContent = 'Invalid IP address. Please enter a valid IPv4 or IPv6 address.';
+                        ipValidationEl.classList.remove('d-none');
+                    }
+                    showError('Invalid IP address.');
+                } else {
+                    showError(err);
+                }
+                return;
+            }
+
+            const data = body;
             if (data.error) {
-                showError(data.error);
-            } else {
-                // If backend reports success=false, show error
-                if (data.success === false) {
-                    showError(data.error || 'Analysis failed');
+                if (String(data.error).toLowerCase().includes('invalid ip')) {
+                    const ipValidationEl2 = document.getElementById('ipValidationMsg');
+                    if (ipValidationEl2) {
+                        ipValidationEl2.textContent = 'Invalid IP address. Please enter a valid IPv4 or IPv6 address.';
+                        ipValidationEl2.classList.remove('d-none');
+                    }
+                    showError('Invalid IP address.');
                     return;
                 }
-                displaySingleResult(data);
+                showError(data.error);
+                return;
             }
+
+            // If backend reports success=false, show error
+            if (data.success === false) {
+                showError(data.error || 'Analysis failed');
+                return;
+            }
+
+            displaySingleResult(data);
         })
         .catch(e => {
             spinner.classList.add('d-none');
