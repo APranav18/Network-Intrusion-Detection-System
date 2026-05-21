@@ -20,6 +20,8 @@ from sqlalchemy import func
 
 logger = logging.getLogger(__name__)
 
+PROJECT_ROOT = Path(__file__).resolve().parents[1]
+
 
 class IPValidator:
     """Validate IP addresses (IPv4 and IPv6)."""
@@ -218,7 +220,8 @@ class IPGeolocation:
 class RealtimeIPRiskModel:
     """Lightweight real-time IP reputation model."""
 
-    MODEL_PATH = Path('models') / 'ip_realtime_model.pkl'
+    DEFAULT_MODEL_PATH = PROJECT_ROOT / 'models' / 'ip_realtime_model.pkl'
+    DEFAULT_THREAT_INTEL_PATH = PROJECT_ROOT / 'data' / 'datasets' / 'threat_intelligence.json'
 
     BENIGN_REFERENCE_IPS = [
         '8.8.8.8',
@@ -237,7 +240,9 @@ class RealtimeIPRiskModel:
         '89.248.165.12',
     ]
 
-    def __init__(self):
+    def __init__(self, model_path: Optional[Path] = None, threat_intel_path: Optional[Path] = None):
+        self.model_path = Path(model_path) if model_path else self.DEFAULT_MODEL_PATH
+        self.threat_intel_path = Path(threat_intel_path) if threat_intel_path else self.DEFAULT_THREAT_INTEL_PATH
         self.model = None
         self.feature_names = [
             'is_private',
@@ -256,15 +261,16 @@ class RealtimeIPRiskModel:
             'watchlist_flag',
             'hostname_present',
         ]
+        self.malicious_reference_ips = self._load_malicious_reference_ips()
         self.model_ready = False
         self._load_model()
 
     def _load_model(self) -> bool:
         try:
-            if not self.MODEL_PATH.exists():
+            if not self.model_path.exists():
                 return False
 
-            with self.MODEL_PATH.open('rb') as handle:
+            with self.model_path.open('rb') as handle:
                 payload = pickle.load(handle)
 
             if isinstance(payload, dict):
@@ -280,6 +286,24 @@ class RealtimeIPRiskModel:
             self.model = None
             self.model_ready = False
             return False
+
+    def _load_malicious_reference_ips(self) -> List[str]:
+        """Load known malicious IPs from the bundled threat-intel file."""
+        ips = list(self.MALICIOUS_REFERENCE_IPS)
+
+        try:
+            if self.threat_intel_path.exists():
+                with self.threat_intel_path.open('r', encoding='utf-8') as handle:
+                    payload = json.load(handle)
+
+                for entry in payload.get('malicious_ips', []):
+                    ip = str(entry.get('ip', '')).strip()
+                    if ip and IPValidator.is_valid_ip(ip):
+                        ips.append(ip)
+        except Exception as e:
+            logger.warning(f"Unable to load bundled malicious IP list: {e}")
+
+        return list(dict.fromkeys(ips))
 
     def ensure_trained(self, force: bool = False) -> bool:
         if self.model_ready and not force:
@@ -301,12 +325,14 @@ class RealtimeIPRiskModel:
         samples: List[np.ndarray] = []
         labels: List[int] = []
 
+        malicious_reference_ips = self._load_malicious_reference_ips()
+
         for ip in self.BENIGN_REFERENCE_IPS:
             context = self._build_context(ip, include_database=False)
             samples.append(self._feature_vector(ip, context))
             labels.append(0)
 
-        for ip in self.MALICIOUS_REFERENCE_IPS:
+        for ip in malicious_reference_ips:
             context = self._build_context(ip, include_database=False)
             context['blocked_threat'] = 1.0
             context['source_alert_count'] = max(context.get('source_alert_count', 0.0), 1.0)
@@ -355,8 +381,8 @@ class RealtimeIPRiskModel:
         self.model = classifier
         self.model_ready = True
 
-        self.MODEL_PATH.parent.mkdir(parents=True, exist_ok=True)
-        with self.MODEL_PATH.open('wb') as handle:
+        self.model_path.parent.mkdir(parents=True, exist_ok=True)
+        with self.model_path.open('wb') as handle:
             pickle.dump({
                 'model': self.model,
                 'feature_names': self.feature_names,
@@ -441,7 +467,7 @@ class RealtimeIPRiskModel:
             probability = self._heuristic_probability(ip, context)
 
         # Heuristic overrides for known reference IPs to ensure expected behavior
-        if ip in self.MALICIOUS_REFERENCE_IPS:
+        if ip in self.malicious_reference_ips:
             probability = max(probability, 0.95)
         elif ip in self.BENIGN_REFERENCE_IPS:
             probability = min(probability, 0.01)
@@ -735,12 +761,51 @@ class IPAnalyzer:
             }
         except Exception as e:
             logger.error(f"Attack history lookup failed for {ip}: {e}")
-            return {
-                'available': False,
-                'status': 'unknown',
-                'attacked': None,
-                'error': str(e)
-            }
+            # Fallback: when database or other resources are unavailable (e.g. running
+            # outside of a Flask application context), still provide a realtime-only
+            # assessment using the lightweight realtime model so callers receive
+            # meaningful results instead of an error block.
+            try:
+                realtime_context = {
+                    'geolocation': geolocation or {},
+                    'reverse_lookup': reverse_lookup or {'success': False, 'hostname': None},
+                    'source_alert_count': 0,
+                    'destination_alert_count': 0,
+                    'total_alert_count': 0,
+                    'blocked_threat': 0.0,
+                    'threat_confidence': 0.0,
+                    'watchlist_flag': 0.0,
+                }
+                realtime_assessment = self.realtime_model.score(ip, realtime_context)
+
+                return {
+                    'available': True,
+                    'status': realtime_assessment.get('status', 'unknown'),
+                    'status_label': realtime_assessment.get('status_label'),
+                    'safety': ('malicious' if realtime_assessment.get('attacked') else ('suspicious' if realtime_assessment.get('suspicious') else 'safe')),
+                    'safety_label': realtime_assessment.get('status_label'),
+                    'attacked': realtime_assessment.get('attacked'),
+                    'suspicious': realtime_assessment.get('suspicious'),
+                    'source_alert_count': 0,
+                    'destination_alert_count': 0,
+                    'total_alert_count': 0,
+                    'severity_breakdown': {},
+                    'attack_types': [],
+                    'first_seen': None,
+                    'last_seen': None,
+                    'recent_alerts': [],
+                    'threat_intelligence': None,
+                    'realtime_ai_assessment': realtime_assessment,
+                    'detection_mode': 'realtime_ai'
+                }
+            except Exception as e2:
+                logger.error(f"Realtime fallback failed for {ip}: {e2}")
+                return {
+                    'available': False,
+                    'status': 'unknown',
+                    'attacked': None,
+                    'error': str(e)
+                }
     
     def _validate_ip(self, ip: str) -> Dict[str, Any]:
         """Validate and characterize IP address."""

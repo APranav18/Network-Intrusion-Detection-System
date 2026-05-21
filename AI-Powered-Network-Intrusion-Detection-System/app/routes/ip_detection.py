@@ -63,6 +63,36 @@ def analyze_ip_address():
         return jsonify({'error': str(e), 'success': False}), 500
 
 
+@ip_detection_bp.route('/analyze-public', methods=['POST'])
+def analyze_ip_address_public():
+    """
+    Dev-only: Analyze a single IP address without authentication when app is running in debug mode.
+    """
+    if not current_app.debug:
+        return jsonify({'error': 'Public analyze disabled', 'success': False}), 403
+
+    data = request.get_json() or {}
+    ip = data.get('ip', '').strip()
+    use_cache = data.get('use_cache', True)
+
+    if not ip:
+        return jsonify({'error': 'IP address is required'}), 400
+
+    if not validate_ip(ip):
+        return jsonify({
+            'error': 'Invalid IP address',
+            'code': 'INVALID_IP',
+            'detail': ip
+        }), 400
+
+    try:
+        result = analyze_ip(ip, use_cache=use_cache)
+        return jsonify(result)
+    except Exception as e:
+        logger.error(f"Public IP analysis error: {e}")
+        return jsonify({'error': str(e), 'success': False}), 500
+
+
 @ip_detection_bp.route('/seed-demo-data', methods=['POST'])
 @login_required
 def seed_demo_data():

@@ -29,6 +29,8 @@ class InternalPageSpeedAnalyzer:
     # Other metric thresholds
     FCP_THRESHOLDS = {"good": 1800, "needs_improvement": 3000}
     TTFB_THRESHOLDS = {"good": 600, "needs_improvement": 1800}
+    SPEED_INDEX_THRESHOLDS = {"good": 3400, "needs_improvement": 5800}
+    TBT_THRESHOLDS = {"good": 200, "needs_improvement": 600}
     
     CATEGORIES = ['performance', 'accessibility', 'best-practices', 'seo', 'pwa']
     
@@ -133,6 +135,17 @@ class InternalPageSpeedAnalyzer:
         # TTFB (Time to First Byte)
         ttfb_value = int((domain_hash % 500) + 200)
         ttfb_rating = self._rate_metric(ttfb_value, self.TTFB_THRESHOLDS)
+
+        # Speed Index and Total Blocking Time help mimic Lighthouse's report cards.
+        speed_index_value = int(lcp_value * 0.9 + (domain_hash % 1200))
+        if strategy == 'desktop':
+            speed_index_value = int(speed_index_value * 0.8)
+        speed_index_rating = self._rate_metric(speed_index_value, self.SPEED_INDEX_THRESHOLDS)
+
+        tbt_value = int(max(50, min(900, (100 - lcp_rating.count('good')) * 4 + (domain_hash % 450))))
+        if strategy == 'desktop':
+            tbt_value = int(max(40, tbt_value * 0.75))
+        tbt_rating = self._rate_metric(tbt_value, self.TBT_THRESHOLDS)
         
         return {
             'lcp': {
@@ -164,6 +177,18 @@ class InternalPageSpeedAnalyzer:
                 'unit': 'milliseconds',
                 'displayValue': f'{ttfb_value} ms',
                 'rating': ttfb_rating
+            },
+            'speed_index': {
+                'value': speed_index_value,
+                'unit': 'milliseconds',
+                'displayValue': f'{speed_index_value / 1000:.1f} s',
+                'rating': speed_index_rating
+            },
+            'tbt': {
+                'value': tbt_value,
+                'unit': 'milliseconds',
+                'displayValue': f'{tbt_value} ms',
+                'rating': tbt_rating
             }
         }
     

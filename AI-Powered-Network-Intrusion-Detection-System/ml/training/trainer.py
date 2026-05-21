@@ -73,6 +73,9 @@ class ModelTrainer:
             },
             'ensemble': {
                 'enabled': True
+            },
+            'ip_reputation': {
+                'enabled': True
             }
         }
         
@@ -231,6 +234,48 @@ class ModelTrainer:
         # This is a placeholder for the actual training
         logger.info("Ensemble training complete")
         return ensemble
+
+    def train_ip_reputation(self) -> Dict[str, Any]:
+        """Train the realtime IP reputation model."""
+        from utils.ip_detector import RealtimeIPRiskModel
+
+        logger.info("Training realtime IP reputation model...")
+
+        model_path = Path(self.model_dir) / 'ip_realtime_model.pkl'
+        model = RealtimeIPRiskModel(model_path=model_path)
+        trained = model.train()
+
+        sample_ips = {
+            'malicious': list(model.malicious_reference_ips[:5]),
+            'benign': list(model.BENIGN_REFERENCE_IPS[:5]),
+        }
+        sample_predictions = {
+            group: {ip: model.score(ip).get('status') for ip in ips}
+            for group, ips in sample_ips.items()
+        }
+
+        metrics = {
+            'status': 'success' if trained else 'failed',
+            'model_path': str(model_path),
+            'malicious_reference_ips': len(model.malicious_reference_ips),
+            'benign_reference_ips': len(model.BENIGN_REFERENCE_IPS),
+            'sample_predictions': sample_predictions,
+        }
+
+        self.history.setdefault('ip_reputation', []).append({
+            'timestamp': datetime.now().isoformat(),
+            'metrics': metrics
+        })
+
+        if trained:
+            logger.info(
+                f"Saved realtime IP reputation model to {model_path} with "
+                f"{len(model.malicious_reference_ips)} malicious reference IPs"
+            )
+        else:
+            logger.warning("Realtime IP reputation model training did not produce a persisted model")
+
+        return metrics
     
     def evaluate_model(
         self,
@@ -399,6 +444,16 @@ class ModelTrainer:
                 except Exception as e:
                     logger.error(f"Ensemble training failed: {e}")
                     results['models']['ensemble'] = {'status': 'failed', 'error': str(e)}
+
+            # Train IP reputation model
+            if self.config['ip_reputation']['enabled']:
+                try:
+                    logger.info("\n[5/5] Training IP Reputation Model...")
+                    ip_metrics = self.train_ip_reputation()
+                    results['models']['ip_reputation'] = ip_metrics
+                except Exception as e:
+                    logger.error(f"IP reputation training failed: {e}")
+                    results['models']['ip_reputation'] = {'status': 'failed', 'error': str(e)}
             
             # Save feature configuration
             self._save_feature_config(X_train.columns.tolist())
@@ -407,6 +462,14 @@ class ModelTrainer:
             logger.warning(f"No training data found: {e}")
             logger.info("Training placeholder models for demo mode...")
             results = self._train_demo_models()
+            if self.config['ip_reputation']['enabled']:
+                try:
+                    logger.info("Training IP reputation model in demo mode...")
+                    ip_metrics = self.train_ip_reputation()
+                    results['models']['ip_reputation'] = ip_metrics
+                except Exception as ip_error:
+                    logger.error(f"IP reputation training failed in demo mode: {ip_error}")
+                    results['models']['ip_reputation'] = {'status': 'failed', 'error': str(ip_error)}
         except Exception as e:
             logger.error(f"Training pipeline error: {e}")
             results['success'] = False

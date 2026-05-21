@@ -1392,6 +1392,400 @@
         margin-bottom: 0.35rem;
         color: #495057;
     }
+
+    .lh-report-shell {
+        background: #ffffff;
+        color: #202124;
+        border: 1px solid #e0e0e0;
+        border-radius: 16px;
+        padding: 20px 18px 24px;
+        box-shadow: 0 8px 28px rgba(60, 64, 67, 0.12);
+    }
+
+    .lh-top-title {
+        font-size: 20px;
+        font-weight: 600;
+        color: #202124;
+        margin-bottom: 12px;
+    }
+
+    .lh-overview-grid {
+        display: grid;
+        grid-template-columns: minmax(280px, 1.05fr) minmax(280px, 0.95fr);
+        gap: 24px;
+        align-items: center;
+        padding: 12px 0 22px;
+        border-bottom: 1px solid #e0e0e0;
+    }
+
+    .lh-score-badge-row {
+        display: flex;
+        justify-content: center;
+        gap: 18px;
+        flex-wrap: wrap;
+        margin-bottom: 18px;
+    }
+
+    .lh-ring-stack {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        gap: 10px;
+    }
+
+    .lh-ring {
+        width: 118px;
+        height: 118px;
+        border-radius: 50%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        position: relative;
+        font-size: 28px;
+        font-weight: 400;
+        background: conic-gradient(var(--ring-color) calc(var(--score) * 1%), #f1f3f4 0);
+    }
+
+    .lh-ring::after {
+        content: '';
+        position: absolute;
+        inset: 6px;
+        border-radius: 50%;
+        background: #ffffff;
+    }
+
+    .lh-ring-value {
+        position: relative;
+        z-index: 1;
+        color: var(--ring-color);
+    }
+
+    .lh-ring-caption {
+        font-size: 14px;
+        color: #3c4043;
+    }
+
+    .lh-main-ring-wrap {
+        display: flex;
+        justify-content: center;
+        margin: 22px 0 18px;
+    }
+
+    .lh-main-ring {
+        width: 176px;
+        height: 176px;
+        border-radius: 50%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        position: relative;
+        background: conic-gradient(var(--ring-color) calc(var(--score) * 1%), #f1f3f4 0);
+    }
+
+    .lh-main-ring::after {
+        content: '';
+        position: absolute;
+        inset: 8px;
+        border-radius: 50%;
+        background: #ffffff;
+    }
+
+    .lh-main-ring-value {
+        position: relative;
+        z-index: 1;
+        font-size: 42px;
+        font-weight: 400;
+        color: var(--ring-color);
+    }
+
+    .lh-main-ring-label {
+        text-align: center;
+        font-size: 22px;
+        font-weight: 400;
+        color: #202124;
+        margin-top: 10px;
+    }
+
+    .lh-preview-phone {
+        width: 170px;
+        border: 1px solid #dadce0;
+        border-radius: 8px;
+        box-shadow: 0 2px 8px rgba(60, 64, 67, 0.18);
+        background: #f8f9fa;
+        margin-left: auto;
+        overflow: hidden;
+    }
+
+    .lh-preview-phone img {
+        width: 100%;
+        display: block;
+    }
+
+    .lh-copy-block {
+        font-size: 15px;
+        line-height: 1.7;
+        color: #3c4043;
+        max-width: 520px;
+        margin: 0 auto;
+        text-align: center;
+    }
+
+    .lh-copy-block a {
+        color: #1a73e8;
+        text-decoration: none;
+    }
+
+    .lh-metrics-row {
+        display: grid;
+        grid-template-columns: repeat(4, minmax(0, 1fr));
+        gap: 16px;
+        margin: 18px 0 8px;
+        align-items: start;
+    }
+
+    .lh-metric-card {
+        display: flex;
+        flex-direction: column;
+        gap: 8px;
+        min-height: 120px;
+        padding: 10px 12px 12px;
+        border-bottom: 1px solid #ececec;
+    }
+
+    .lh-metric-title {
+        display: flex;
+        align-items: center;
+        gap: 8px;
+        font-size: 15px;
+        color: #202124;
+    }
+
+    .lh-triangle {
+        width: 0;
+        height: 0;
+        border-left: 7px solid transparent;
+        border-right: 7px solid transparent;
+        border-bottom: 14px solid #ea4335;
+        flex: 0 0 auto;
+    }
+
+    .lh-metric-value {
+        font-size: 32px;
+        font-weight: 400;
+        line-height: 1;
+    }
+
+    .lh-metric-value.good { color: #0cce6b; }
+    .lh-metric-value.warn { color: #ffa400; }
+    .lh-metric-value.bad { color: #ea4335; }
+
+    .lh-meta-strip {
+        margin-top: 16px;
+        background: #f8f9fa;
+        border: 1px solid #e0e0e0;
+        border-radius: 8px;
+        padding: 14px 16px;
+        display: grid;
+        grid-template-columns: repeat(3, minmax(0, 1fr));
+        gap: 12px;
+        align-items: center;
+    }
+
+    .lh-meta-cell {
+        font-size: 13px;
+        color: #5f6368;
+    }
+
+    .lh-meta-value {
+        display: block;
+        margin-top: 4px;
+        font-size: 14px;
+        color: #202124;
+    }
+
+    .lh-section-title {
+        margin: 28px 0 14px;
+        font-size: 13px;
+        letter-spacing: 0.04em;
+        text-transform: uppercase;
+        color: #5f6368;
+    }
+
+    .lh-report-tabs {
+        border-bottom: 1px solid #e0e0e0;
+        gap: 10px;
+    }
+
+    .lh-report-tabs .nav-link {
+        border: 0;
+        border-bottom: 3px solid transparent;
+        color: #5f6368;
+        padding: 10px 16px;
+        background: transparent;
+        border-radius: 0;
+        font-weight: 500;
+    }
+
+    .lh-report-tabs .nav-link.active {
+        color: #1a73e8;
+        border-bottom-color: #1a73e8;
+        background: transparent;
+        box-shadow: none;
+    }
+
+    .lh-panel-shell {
+        padding-top: 14px;
+    }
+
+    .lh-audit-block {
+        border-top: 1px solid #e0e0e0;
+        margin-top: 12px;
+        padding-top: 12px;
+    }
+
+    .lh-audit-title {
+        font-size: 20px;
+        font-weight: 400;
+        color: #202124;
+        margin-bottom: 14px;
+    }
+
+    .lh-audit-row {
+        display: grid;
+        grid-template-columns: repeat(4, minmax(0, 1fr));
+        gap: 14px;
+    }
+
+    .lh-audit-card {
+        display: flex;
+        flex-direction: column;
+        gap: 6px;
+        align-items: center;
+        justify-content: center;
+    }
+
+    .lh-mini-ring {
+        width: 110px;
+        height: 110px;
+        border-radius: 50%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        position: relative;
+        background: conic-gradient(var(--ring-color) calc(var(--score) * 1%), #f1f3f4 0);
+    }
+
+    .lh-mini-ring::after {
+        content: '';
+        position: absolute;
+        inset: 6px;
+        border-radius: 50%;
+        background: #ffffff;
+    }
+
+    .lh-mini-ring span {
+        position: relative;
+        z-index: 1;
+        font-size: 26px;
+        color: var(--ring-color);
+        font-weight: 400;
+    }
+
+    .lh-mini-label {
+        font-size: 14px;
+        color: #3c4043;
+        text-align: center;
+    }
+
+    .lh-metric-strip,
+    .lh-table-card {
+        background: #ffffff;
+        border: 1px solid #e0e0e0;
+        border-radius: 8px;
+        padding: 14px 16px;
+    }
+
+    .lh-audit-list {
+        background: #ffffff;
+        border: 1px solid #e0e0e0;
+        border-radius: 8px;
+        margin-bottom: 12px;
+    }
+
+    .lh-audit-list .lh-audit-list-head {
+        padding: 12px 14px;
+        font-weight: 500;
+        border-bottom: 1px solid #e0e0e0;
+        color: #202124;
+    }
+
+    .lh-audit-list ul {
+        margin: 0;
+        padding: 10px 20px 12px 30px;
+        color: #3c4043;
+    }
+
+    .lh-audit-list li {
+        margin-bottom: 8px;
+    }
+
+    .lh-subtitle {
+        font-size: 14px;
+        color: #5f6368;
+    }
+
+    .lh-table {
+        width: 100%;
+        border-collapse: collapse;
+    }
+
+    .lh-table th,
+    .lh-table td {
+        padding: 10px 0;
+        border-bottom: 1px solid #ececec;
+        font-size: 14px;
+        color: #3c4043;
+    }
+
+    .lh-table th {
+        width: 40%;
+        font-weight: 500;
+        color: #202124;
+    }
+
+    .lh-comparison-grid {
+        display: grid;
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+        gap: 14px;
+    }
+
+    .lh-comparison-card {
+        border: 1px solid #e0e0e0;
+        border-radius: 8px;
+        padding: 14px;
+        background: #ffffff;
+    }
+
+    .lh-preview-image {
+        width: 100%;
+        max-width: 180px;
+        display: block;
+        margin-left: auto;
+        margin-right: auto;
+        border: 1px solid #dadce0;
+        border-radius: 8px;
+        box-shadow: 0 2px 6px rgba(60, 64, 67, 0.18);
+    }
+
+    @media (max-width: 992px) {
+        .lh-overview-grid,
+        .lh-metrics-row,
+        .lh-audit-row,
+        .lh-meta-strip,
+        .lh-comparison-grid {
+            grid-template-columns: 1fr;
+        }
+    }
 </style>
 
 <script>
@@ -1786,309 +2180,365 @@ document.addEventListener('DOMContentLoaded', function() {
         `;
     }
 
+    // Helper functions for domain rendering (kept outside of template strings)
+    const ringColor = (score) => {
+        const s = Number(score || 0);
+        if (s >= 90) return '#0cce6b';
+        if (s >= 50) return '#ffa400';
+        return '#ff4e42';
+    };
+
+    const metricRatingClass = (rating) => {
+        const normalized = (rating || '').toLowerCase();
+        if (normalized === 'good' || normalized === 'fast') return 'good';
+        if (normalized === 'needs-improvement' || normalized === 'average') return 'warn';
+        return 'bad';
+    };
+
+    const metricValue = (metric) => {
+        const value = metric?.value;
+        if (value === undefined || value === null) return 'N/A';
+        return metric?.displayValue || value;
+    };
+
+    const rawMetric = (result, key) => (result?.metrics || {})[key] || null;
+
+    const renderMiniRing = (score, label) => {
+        const resolved = Number.isFinite(Number(score)) ? Number(score) : 0;
+        return `
+            <div class="lh-ring-stack">
+                <div class="lh-ring" style="--score: ${resolved}; --ring-color: ${ringColor(resolved)};">
+                    <div class="lh-ring-value">${resolved}</div>
+                </div>
+                <div class="lh-ring-caption">${label}</div>
+            </div>
+        `;
+    };
+
+    const renderMetricBlock = (title, metric, triangle = true) => {
+        const css = metricRatingClass(metric?.rating);
+        const value = metricValue(metric);
+        return `
+            <div class="lh-metric-card">
+                <div class="lh-metric-title">${triangle ? '<span class="lh-triangle"></span>' : ''}<span>${title}</span></div>
+                <div class="lh-metric-value ${css}">${value}</div>
+            </div>
+        `;
+    };
+
+    const renderAuditList = (title, items) => {
+        const entries = Array.isArray(items) ? items : [];
+        return `
+            <div class="lh-audit-list">
+                <div class="lh-audit-list-head">${title}</div>
+                ${entries.length ? `<ul>${entries.map((item) => `<li>${item}</li>`).join('')}</ul>` : '<div class="p-3 lh-subtitle">No issues surfaced in this section.</div>'}
+            </div>
+        `;
+    };
+
+    const failureAudits = (result, key) => {
+        const audits = result?.raw_data?.lighthouseResult?.audits || {};
+        const categories = result?.raw_data?.lighthouseResult?.categories || {};
+        const refs = categories?.[key]?.auditRefs || [];
+        return refs
+            .map((ref) => audits[ref.id])
+            .filter((audit) => audit && Number(audit.score) < 1)
+            .slice(0, 4)
+            .map((audit) => audit.title);
+    };
+
     function displayDomainResults(data) {
         const body = document.getElementById('domainResultsBody');
-        const mobileScore = data.mobile?.success ? Math.round(data.mobile?.scores?.performance || 0) : 'N/A';
-        const desktopScore = data.desktop?.success ? Math.round(data.desktop?.scores?.performance || 0) : 'N/A';
-        const mobileScoreValue = Number.isFinite(Number(mobileScore)) ? Number(mobileScore) : 0;
-        const desktopScoreValue = Number.isFinite(Number(desktopScore)) ? Number(desktopScore) : 0;
-        const overviewScore = Number.isFinite(Number(data.summary?.performance_score)) ? Math.round(Number(data.summary.performance_score)) : mobileScoreValue;
-        const reportTimestamp = data.timestamp ? new Date(data.timestamp).toLocaleString() : 'N/A';
+        const section = document.getElementById('domainResultsSection');
+        if (!body || !section) return;
 
-        const cwvVerdict = (result) => {
-            const fd = result?.field_data?.metrics || {};
-            const lcp = fd['LARGEST_CONTENTFUL_PAINT_MS']?.category;
-            const inp = (fd['INTERACTION_TO_NEXT_PAINT'] || fd['EXPERIMENTAL_INTERACTION_TO_NEXT_PAINT'])?.category;
-            const cls = fd['CUMULATIVE_LAYOUT_SHIFT_SCORE']?.category;
-            const pass = lcp === 'FAST' && inp === 'FAST' && cls === 'FAST';
-            return pass ? 'Passed' : 'Failed';
+        const activeDevice = document.querySelector('.psi-device-option.active')?.dataset.device || 'mobile';
+        const mobile = data.mobile || {};
+        const desktop = data.desktop || {};
+        const selected = activeDevice === 'desktop' ? desktop : mobile;
+        const reportUrl = String(data.report_url || '').replace(/'/g, "\\'");
+        const target = data.url || data.domain || 'Unknown target';
+        const reportStamp = new Date(data.timestamp || Date.now()).toLocaleString();
+
+        const performanceScore = Math.round(Number(selected?.scores?.performance || 0));
+        const accessibilityScore = Math.round(Number(selected?.scores?.accessibility || 0));
+        const bestPracticesScore = Math.round(Number(selected?.scores?.['best-practices'] || 0));
+        const seoScore = Math.round(Number(selected?.scores?.seo || 0));
+        const vitals = selected?.field_data?.metrics || {};
+
+        const getVital = (key, fallbackValue, fallbackLabel) => {
+            const record = vitals[key] || {};
+            const value = record.percentile ?? fallbackValue;
+            const numeric = Number(value);
+            const label = record.category || fallbackLabel || 'AVERAGE';
+            const scoreClass = label === 'FAST' || label === 'GOOD' ? 'psi-good' : label === 'SLOW' || label === 'POOR' ? 'psi-danger' : 'psi-warning';
+            return { value: Number.isFinite(numeric) ? numeric : null, label, scoreClass };
         };
 
-        const ratingToClass = (category) => {
-            const normalized = (category || '').toUpperCase();
-            if (normalized === 'FAST' || normalized === 'GOOD') return 'psi-good';
-            if (normalized === 'AVERAGE' || normalized === 'NEEDS_IMPROVEMENT' || normalized === 'NEEDS-IMPROVEMENT') return 'psi-warning';
-            if (normalized === 'SLOW' || normalized === 'POOR') return 'psi-danger';
-            return 'psi-warning';
-        };
+        const lcp = getVital('LARGEST_CONTENTFUL_PAINT_MS', selected?.metrics?.lcp?.value, selected?.metrics?.lcp?.rating === 'good' ? 'FAST' : selected?.metrics?.lcp?.rating === 'needs-improvement' ? 'AVERAGE' : 'SLOW');
+        const inp = getVital('INTERACTION_TO_NEXT_PAINT', selected?.metrics?.inp?.value, selected?.metrics?.inp?.rating === 'good' ? 'FAST' : selected?.metrics?.inp?.rating === 'needs-improvement' ? 'AVERAGE' : 'SLOW');
+        const cls = getVital('CUMULATIVE_LAYOUT_SHIFT_SCORE', selected?.metrics?.cls?.value, selected?.metrics?.cls?.rating === 'good' ? 'GOOD' : selected?.metrics?.cls?.rating === 'needs-improvement' ? 'AVERAGE' : 'POOR');
+        const fcp = selected?.metrics?.fcp || {};
+        const ttfb = selected?.metrics?.ttfb || {};
+        const scoreClass = performanceScore >= 90 ? 'psi-good' : performanceScore >= 50 ? 'psi-warning' : 'psi-danger';
+        const coreWebVitalsPassed = [lcp, inp, cls].every((item) => item.scoreClass === 'psi-good');
+        const assessmentLabel = coreWebVitalsPassed ? 'Passed' : 'Failed';
+        const assessmentColorClass = coreWebVitalsPassed ? 'psi-good' : 'psi-danger';
 
-        const normalizeRating = (category) => {
-            const normalized = (category || '').toUpperCase();
-            if (normalized === 'FAST' || normalized === 'GOOD') return 'Good';
-            if (normalized === 'AVERAGE' || normalized === 'NEEDS_IMPROVEMENT' || normalized === 'NEEDS-IMPROVEMENT') return 'Needs Improvement';
-            if (normalized === 'SLOW' || normalized === 'POOR') return 'Poor';
-            return 'Unknown';
-        };
+        const scoreRingStyle = `--score: ${performanceScore}; --ring-color: ${scoreClass === 'psi-good' ? '#1e8e3e' : scoreClass === 'psi-warning' ? '#f9ab00' : '#d93025'};`;
 
-        const formatMetricValue = (metricKey, metric) => {
-            const percentile = metric?.percentile;
-            if (percentile === undefined || percentile === null) return 'N/A';
-            if (metricKey === 'CUMULATIVE_LAYOUT_SHIFT_SCORE') return Number(percentile).toFixed(2);
-            if (metricKey === 'INTERACTION_TO_NEXT_PAINT') return `${Math.round(percentile)} ms`;
-            return percentile >= 1000 ? `${(percentile / 1000).toFixed(1)} s` : `${Math.round(percentile)} ms`;
-        };
-
-        const metricThresholds = {
-            LARGEST_CONTENTFUL_PAINT_MS: { good: 2500, poor: 4000 },
-            INTERACTION_TO_NEXT_PAINT: { good: 200, poor: 500 },
-            CUMULATIVE_LAYOUT_SHIFT_SCORE: { good: 0.1, poor: 0.25 },
-            FIRST_CONTENTFUL_PAINT_MS: { good: 1800, poor: 3000 },
-            EXPERIMENTAL_TIME_TO_FIRST_BYTE: { good: 800, poor: 1800 },
-        };
-
-        const getMetricMarkerPosition = (metricKey, metric) => {
-            const thresholds = metricThresholds[metricKey];
-            const percentile = metric?.percentile;
-            if (!thresholds || percentile === undefined || percentile === null) return 74;
-
-            const raw = Number(percentile);
-            if (!Number.isFinite(raw)) return 74;
-
-            const normalized = raw;
-            const ratio = normalized <= thresholds.good ? 0 : normalized >= thresholds.poor ? 1 : (normalized - thresholds.good) / (thresholds.poor - thresholds.good);
-            return 10 + (ratio * 80);
-        };
-
-        const metricOrNA = (result, metricKey) => {
-            return (result?.field_data?.metrics || {})[metricKey] || null;
-        };
-
-        const scoreClass = (score) => {
-            const s = Number(score || 0);
-            if (s >= 90) return 'psi-good';
-            if (s >= 50) return 'psi-warning';
-            return 'psi-danger';
-        };
-
-        const getFailedAudits = (result, categoryKey, limit = 4) => {
-            const raw = result?.raw_data || {};
-            const lighthouse = raw.lighthouseResult || {};
-            const category = lighthouse.categories?.[categoryKey] || {};
-            const audits = lighthouse.audits || {};
-            const refs = category.auditRefs || [];
-
-            return refs
-                .map((ref) => audits[ref.id])
-                .filter((audit) => audit && audit.scoreDisplayMode !== 'notApplicable' && audit.scoreDisplayMode !== 'manual' && Number(audit.score) < 1)
-                .map((audit) => audit.title)
-                .filter(Boolean)
-                .slice(0, limit);
-        };
-
-        const renderAuditSection = (title, entries) => {
-            if (!entries || entries.length === 0) {
-                return `
-                    <div class="psi-audit-list">
-                        <div class="psi-audit-title">${title}</div>
-                        <div class="p-3 text-muted small">No major issues detected in this category.</div>
-                    </div>
-                `;
-            }
-
+        const metricBar = (label, item, displayValue, unit, maxValue) => {
+            const numeric = Number(item?.value);
+            const safeMax = Number(maxValue) > 0 ? Number(maxValue) : 100;
+            const progress = Number.isFinite(numeric) ? Math.max(0, Math.min(100, (numeric / safeMax) * 100)) : 0;
+            const markerClass = item?.scoreClass || 'psi-warning';
+            const markerStyle = `left: ${progress}%;`;
             return `
-                <div class="psi-audit-list">
-                    <div class="psi-audit-title">${title}</div>
-                    <ul>
-                        ${entries.map((item) => `<li>${item}</li>`).join('')}
-                    </ul>
-                </div>
-            `;
-        };
-
-        const renderMetricMeter = (title, metricKey, metric) => {
-            const rating = normalizeRating(metric?.category);
-            const css = ratingToClass(metric?.category);
-            const markerLeft = getMetricMarkerPosition(metricKey, metric);
-            const value = formatMetricValue(metricKey, metric);
-
-            return `
-                <div class="col-md-4 mb-3">
-                    <div class="psi-metric-card h-100">
-                        <div class="metric-name mb-1">${title}</div>
-                        <div class="metric-value ${css}">${value}</div>
-                        <div class="psi-meter-track">
-                            <span class="psi-meter-marker ${css}" style="left: ${markerLeft}%"></span>
-                        </div>
-                        <span class="psi-rating-pill ${css}">${rating}</span>
+                <div class="lh-metric-card">
+                    <div class="lh-metric-title"><span class="lh-triangle" style="border-bottom-color:${markerClass === 'psi-good' ? '#0cce6b' : markerClass === 'psi-danger' ? '#ea4335' : '#ffa400'}"></span><span>${label}</span></div>
+                    <div class="lh-metric-value ${markerClass}">${displayValue}${unit ? ` ${unit}` : ''}</div>
+                    <div class="psi-meter-track">
+                        <span class="psi-meter-marker ${markerClass}" style="${markerStyle}"></span>
                     </div>
                 </div>
             `;
         };
 
-        const renderStrategyPanel = (label, result, score, buttonClass) => {
-            if (!result?.success) {
-                const fallbackReport = result?.report_url || `https://pagespeed.web.dev/analysis?url=${encodeURIComponent(data.url || data.domain || '')}&form_factor=${label.toLowerCase()}`;
-                return `
-                    <div class="alert alert-warning mb-3">
-                        <strong>${label} analysis unavailable.</strong><br>
-                        ${result?.error || 'PageSpeed API request failed.'}
+        const performancePreview = 'data:image/svg+xml;charset=UTF-8,' + encodeURIComponent(`
+            <svg xmlns="http://www.w3.org/2000/svg" width="220" height="360" viewBox="0 0 220 360">
+                <rect width="220" height="360" rx="16" fill="#f8f9fa"/>
+                <rect x="18" y="18" width="184" height="24" rx="12" fill="#ffe066"/>
+                <rect x="18" y="50" width="92" height="22" rx="11" fill="#dbe4f0"/>
+                <rect x="18" y="84" width="184" height="24" rx="12" fill="#eef2f7"/>
+                <rect x="18" y="118" width="184" height="76" rx="14" fill="#ffffff" stroke="#d9e2ec"/>
+                <rect x="28" y="130" width="62" height="8" rx="4" fill="#222222"/>
+                <rect x="28" y="146" width="126" height="8" rx="4" fill="#b9c3cf"/>
+                <rect x="28" y="162" width="104" height="8" rx="4" fill="#d1d9e6"/>
+                <rect x="18" y="208" width="84" height="48" rx="12" fill="#f4f7fb" stroke="#d9e2ec"/>
+                <rect x="110" y="208" width="92" height="48" rx="12" fill="#f4f7fb" stroke="#d9e2ec"/>
+                <rect x="18" y="270" width="184" height="18" rx="9" fill="#eef2f7"/>
+                <rect x="18" y="300" width="126" height="14" rx="7" fill="#dbe4f0"/>
+                <text x="110" y="348" text-anchor="middle" font-family="Arial, sans-serif" font-size="14" fill="#6b7280">Mobile preview</text>
+            </svg>
+        `);
+
+        const accessibilityAudits = Array.isArray(selected?.audits?.accessibility_audits) ? selected.audits.accessibility_audits : [];
+        const bestPracticeAudits = Array.isArray(selected?.audits?.best_practices_audits) ? selected.audits.best_practices_audits : [];
+        const performanceAudits = Array.isArray(selected?.audits?.performance_audits) ? selected.audits.performance_audits : [];
+
+        const renderAuditBullet = (title, status, description) => {
+            const statusClass = status === 'pass' ? 'psi-good' : status === 'warn' ? 'psi-warning' : 'psi-danger';
+            const icon = status === 'pass' ? 'fa-check-circle' : status === 'warn' ? 'fa-exclamation-triangle' : 'fa-times-circle';
+            return `
+                <div class="d-flex align-items-start gap-3 px-3 px-md-4 py-3 border-top">
+                    <div class="mt-1 ${statusClass}" style="font-size: 1.05rem; line-height: 1;">
+                        <i class="fas ${icon}"></i>
                     </div>
                     <div>
-                        <a href="${fallbackReport}" target="_blank" class="btn ${buttonClass} btn-sm">Open Official PageSpeed Report</a>
+                        <div class="fw-semibold ${statusClass}">${title}</div>
+                        <div class="small mt-2" style="color: rgba(60, 64, 67, 0.8);">${description || 'No extra details available.'}</div>
                     </div>
-                `;
-            }
-
-            const lcp = metricOrNA(result, 'LARGEST_CONTENTFUL_PAINT_MS');
-            const inp = metricOrNA(result, 'INTERACTION_TO_NEXT_PAINT') || metricOrNA(result, 'EXPERIMENTAL_INTERACTION_TO_NEXT_PAINT');
-            const cls = metricOrNA(result, 'CUMULATIVE_LAYOUT_SHIFT_SCORE');
-            const fcp = metricOrNA(result, 'FIRST_CONTENTFUL_PAINT_MS');
-            const ttfb = metricOrNA(result, 'EXPERIMENTAL_TIME_TO_FIRST_BYTE') || metricOrNA(result, 'TIME_TO_FIRST_BYTE');
-
-            return `
-                <div class="psi-assessment-row">
-                    <div>
-                        <div class="h6 mb-1">${label} Report</div>
-                        <div class="text-muted small">Core Web Vitals Assessment: <strong class="${cwvVerdict(result) === 'Passed' ? 'text-success' : 'text-danger'}">${cwvVerdict(result)}</strong></div>
-                    </div>
-                    <div class="text-end">
-                        <div class="psi-expand-view">Expand view</div>
-                        <div class="h4 mb-1">${score}</div>
-                        <div class="text-muted small">Performance Score</div>
-                    </div>
-                </div>
-
-                <div class="psi-mini-summary mb-3">
-                    <div class="psi-mini-summary-item">
-                        <div class="psi-mini-summary-label">LCP</div>
-                        <div class="psi-mini-summary-value ${ratingToClass(lcp?.category)}">${formatMetricValue('LARGEST_CONTENTFUL_PAINT_MS', lcp)}</div>
-                    </div>
-                    <div class="psi-mini-summary-item">
-                        <div class="psi-mini-summary-label">INP</div>
-                        <div class="psi-mini-summary-value ${ratingToClass(inp?.category)}">${formatMetricValue('INTERACTION_TO_NEXT_PAINT', inp)}</div>
-                    </div>
-                    <div class="psi-mini-summary-item">
-                        <div class="psi-mini-summary-label">CLS</div>
-                        <div class="psi-mini-summary-value ${ratingToClass(cls?.category)}">${formatMetricValue('CUMULATIVE_LAYOUT_SHIFT_SCORE', cls)}</div>
-                    </div>
-                </div>
-
-                <div class="mb-2"><strong>Core Web Vitals</strong></div>
-                <div class="row mb-3">
-                    ${renderMetricMeter('Largest Contentful Paint (LCP)', 'LARGEST_CONTENTFUL_PAINT_MS', lcp)}
-                    ${renderMetricMeter('Interaction to Next Paint (INP)', 'INTERACTION_TO_NEXT_PAINT', inp)}
-                    ${renderMetricMeter('Cumulative Layout Shift (CLS)', 'CUMULATIVE_LAYOUT_SHIFT_SCORE', cls)}
-                </div>
-
-                <div class="mb-2"><strong>Other Notable Metrics</strong></div>
-                <div class="row mb-3">
-                    ${renderMetricMeter('First Contentful Paint (FCP)', 'FIRST_CONTENTFUL_PAINT_MS', fcp)}
-                    ${renderMetricMeter('Time to First Byte (TTFB)', 'EXPERIMENTAL_TIME_TO_FIRST_BYTE', ttfb)}
                 </div>
             `;
         };
+
+        const auditSummary = [
+            { label: 'Performance', score: performanceScore },
+            { label: 'Accessibility', score: accessibilityScore },
+            { label: 'Best Practices', score: bestPracticesScore },
+            { label: 'SEO', score: seoScore },
+        ];
 
         body.innerHTML = `
-            <div class="psi-report-shell">
-                <div class="lh-overview">
-                    <div class="text-center">
-                        <div class="lh-score-ring" style="--score: ${Math.max(0, Math.min(100, overviewScore))}">
-                            <div class="score-value">${overviewScore}</div>
-                            <div class="score-label">Performance</div>
-                        </div>
-                    </div>
-                    <div class="lh-overview-copy">
-                        <h3>Lighthouse-style domain overview</h3>
-                        <p>Mobile and desktop results rendered in a report layout inspired by the uploaded screenshots.</p>
+            <div class="lh-report-shell">
+                <div class="lh-top-title">Discover what your real users are experiencing</div>
 
-                        <div class="lh-summary-grid">
-                            <div class="lh-summary-card">
-                                <div class="lh-summary-label">Aggregate score</div>
-                                <div class="lh-summary-value ${scoreClass(Number.isFinite(Number(data.summary?.performance_score)) ? Number(data.summary.performance_score) : mobileScoreValue)}">${data.summary?.performance_score ?? 'N/A'}</div>
-                            </div>
-                            <div class="lh-summary-card">
-                                <div class="lh-summary-label">Mobile score</div>
-                                <div class="lh-summary-value ${scoreClass(mobileScoreValue)}">${mobileScore}</div>
-                            </div>
-                            <div class="lh-summary-card">
-                                <div class="lh-summary-label">Desktop score</div>
-                                <div class="lh-summary-value ${scoreClass(desktopScoreValue)}">${desktopScore}</div>
-                            </div>
-                            <div class="lh-summary-card">
-                                <div class="lh-summary-label">Assessment</div>
-                                <div class="lh-summary-value warn">${cwvVerdict(data.mobile?.success ? data.mobile : data.desktop)}</div>
-                            </div>
-                        </div>
-
-                        <div class="lh-device-preview">
-                            <div class="lh-device-card">
-                                <div class="lh-device-pill"><i class="fas fa-mobile-alt"></i> Mobile</div>
-                                <div class="lh-device-score ${scoreClass(mobileScoreValue)}">${mobileScore}</div>
-                                <div class="lh-device-subtext">Performance-focused mobile audit view</div>
-                            </div>
-                            <div class="lh-device-card">
-                                <div class="lh-device-pill"><i class="fas fa-desktop"></i> Desktop</div>
-                                <div class="lh-device-score ${scoreClass(desktopScoreValue)}">${desktopScore}</div>
-                                <div class="lh-device-subtext">Desktop audit view and comparison summary</div>
-                            </div>
-                        </div>
-                    </div>
+                <div class="d-flex justify-content-end gap-2 mb-3">
+                    <button type="button" class="btn btn-sm btn-outline-secondary active">This URL</button>
+                    <button type="button" class="btn btn-sm btn-outline-secondary">Origin</button>
                 </div>
 
-                <div class="psi-report-topline">Report from ${reportTimestamp}</div>
-
-                <div class="psi-results-header d-flex justify-content-between align-items-start flex-wrap gap-2 mb-3">
+                <div class="lh-overview-grid">
                     <div>
-                        <div class="psi-results-title mb-1">Discover what your real users are experiencing</div>
-                        <div class="psi-report-url">${data.url}</div>
-                    </div>
-                    <div class="psi-origin-toggle">
-                        <button type="button" class="active">This URL</button>
-                        <button type="button">Origin</button>
-                    </div>
-                </div>
-
-                <div class="small text-muted mb-4">Analyzed domain: <span class="fw-semibold text-dark">${data.domain}</span></div>
-
-                <!-- Audit Scores Gauges -->
-                <div class="mb-4">
-                    <h6 class="mb-4">Diagnose performance issues</h6>
-                    <div class="row justify-content-start mb-4">
-                        ${createAuditGauge('Performance', Math.round(data.mobile?.scores?.performance || 0))}
-                        ${createAuditGauge('Accessibility', Math.round(data.mobile?.scores?.accessibility || 0))}
-                        ${createAuditGauge('Best Practices', Math.round(data.mobile?.scores?.['best-practices'] || 0))}
-                        ${createAuditGauge('SEO', Math.round(data.mobile?.scores?.seo || 0))}
-                    </div>
-                </div>
-
-                <div class="psi-summary-strip mb-3">
-                    <div class="psi-summary-item">
-                        <div class="psi-summary-label">Mobile score</div>
-                        <div class="psi-summary-value ${scoreClass(mobileScore)}">${mobileScore}</div>
-                    </div>
-                    <div class="psi-summary-item">
-                        <div class="psi-summary-label">Desktop score</div>
-                        <div class="psi-summary-value ${scoreClass(desktopScore)}">${desktopScore}</div>
-                    </div>
-                    <div class="psi-summary-item">
-                        <div class="psi-summary-label">Assessment</div>
-                        <div class="psi-summary-value ${scoreClass(data.mobile?.success || data.desktop?.success ? mobileScore : 0)}">${cwvVerdict(data.mobile?.success ? data.mobile : data.desktop)}</div>
-                    </div>
-                </div>
-
-                <ul class="nav nav-pills psi-report-tabs mb-0" id="domainResultPills" role="tablist">
-                    <li class="nav-item" role="presentation">
-                        <button class="nav-link active" id="domain-mobile-tab" data-bs-toggle="pill" data-bs-target="#domain-mobile-panel" type="button" role="tab">Mobile</button>
-                    </li>
-                    <li class="nav-item" role="presentation">
-                        <button class="nav-link" id="domain-desktop-tab" data-bs-toggle="pill" data-bs-target="#domain-desktop-panel" type="button" role="tab">Desktop</button>
-                    </li>
-                </ul>
-
-                <div class="psi-panel">
-                    <div class="tab-content" id="domainResultPillContent">
-                        <div class="tab-pane fade show active" id="domain-mobile-panel" role="tabpanel" aria-labelledby="domain-mobile-tab">
-                            ${renderStrategyPanel('Mobile', data.mobile, mobileScore, 'btn-outline-primary')}
+                        <div class="lh-score-badge-row">
+                            ${auditSummary.map((item) => {
+                                const ringClass = item.score >= 90 ? 'psi-good' : item.score >= 50 ? 'psi-warning' : 'psi-danger';
+                                return `<div class="lh-ring-stack"><div class="lh-ring" style="--score:${item.score};--ring-color:${ringClass === 'psi-good' ? '#0cce6b' : ringClass === 'psi-warning' ? '#ffa400' : '#ea4335'};"><span class="lh-ring-value">${item.score}</span></div><div class="lh-ring-caption">${item.label}</div></div>`;
+                            }).join('')}
                         </div>
-                        <div class="tab-pane fade" id="domain-desktop-panel" role="tabpanel" aria-labelledby="domain-desktop-tab">
-                            ${renderStrategyPanel('Desktop', data.desktop, desktopScore, 'btn-outline-secondary')}
+
+                        <div class="lh-main-ring-wrap">
+                            <div>
+                                <div class="lh-main-ring" style="${scoreRingStyle}"><div class="lh-main-ring-value">${performanceScore}</div></div>
+                                <div class="lh-main-ring-label">Performance</div>
+                            </div>
+                        </div>
+
+                        <div class="lh-copy-block">
+                            Values are estimated and may vary. The <a href="#">performance score is calculated directly from these metrics</a>. <a href="#">See calculator.</a>
+                        </div>
+                    </div>
+
+                    <div class="d-flex justify-content-center align-items-center">
+                        <div class="lh-preview-phone">
+                            <div style="height: 10px; background: #e8eaed;"></div>
+                            <img alt="Page preview" src="${performancePreview}">
+                            <div style="padding: 10px 12px 12px; background: #ffffff;">
+                                <div style="height: 10px; width: 88%; background: #edf2f7; border-radius: 999px; margin-bottom: 8px;"></div>
+                                <div style="height: 10px; width: 62%; background: #edf2f7; border-radius: 999px; margin-bottom: 8px;"></div>
+                                <div style="height: 10px; width: 74%; background: #edf2f7; border-radius: 999px; margin-bottom: 8px;"></div>
+                                <div style="display:grid;grid-template-columns:repeat(2,1fr);gap:6px;">
+                                    <div style="height: 48px; background:#f4f6f9; border-radius:8px;"></div>
+                                    <div style="height: 48px; background:#f4f6f9; border-radius:8px;"></div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="lh-audit-block">
+                    <div class="lh-audit-title">Core Web Vitals Assessment: <span class="${assessmentColorClass}">${assessmentLabel}</span> <i class="far fa-question-circle" style="font-size: 0.7em; color: #80868b;"></i></div>
+                    <div class="lh-metrics-row" style="grid-template-columns: repeat(3, minmax(0, 1fr));">
+                        ${metricBar('Largest Contentful Paint (LCP)', lcp, selected?.metrics?.lcp?.displayValue || (lcp.value ? `${(lcp.value / 1000).toFixed(1)} s` : 'N/A'), '', 4000)}
+                        ${metricBar('Interaction to Next Paint (INP)', inp, selected?.metrics?.inp?.displayValue || (inp.value ? `${Math.round(inp.value)} ms` : 'N/A'), '', 500)}
+                        ${metricBar('Cumulative Layout Shift (CLS)', cls, selected?.metrics?.cls?.displayValue || (cls.value !== null ? Number(cls.value).toFixed(2) : 'N/A'), '', 0.25)}
+                    </div>
+
+                    <div class="lh-section-title">Other Notable Metrics</div>
+                    <div class="lh-metrics-row" style="grid-template-columns: repeat(2, minmax(0, 1fr));">
+                        ${metricBar('First Contentful Paint (FCP)', { value: fcp.value, scoreClass: fcp.rating === 'good' ? 'psi-good' : fcp.rating === 'needs-improvement' ? 'psi-warning' : 'psi-danger' }, fcp.displayValue || (fcp.value ? `${(Number(fcp.value) / 1000).toFixed(1)} s` : 'N/A'), '', 4000)}
+                        ${metricBar('Time to First Byte (TTFB)', { value: ttfb.value, scoreClass: ttfb.rating === 'good' ? 'psi-good' : ttfb.rating === 'needs-improvement' ? 'psi-warning' : 'psi-danger' }, ttfb.displayValue || (ttfb.value ? `${(Number(ttfb.value) / 1000).toFixed(1)} s` : 'N/A'), '', 1800)}
+                    </div>
+
+                    <div class="lh-meta-strip">
+                        <div class="lh-meta-cell">Latest 28-day period<span class="lh-meta-value">(history)</span></div>
+                        <div class="lh-meta-cell">Various mobile devices<span class="lh-meta-value">Various network connections</span></div>
+                        <div class="lh-meta-cell">Many samples (Chrome UX Report)<span class="lh-meta-value">All Chrome versions</span></div>
+                    </div>
+
+                    <div class="lh-section-title">Category Overview</div>
+                    <div class="lh-audit-row" style="grid-template-columns: repeat(4, minmax(0, 1fr));">
+                        ${[
+                            { label: 'Performance', score: performanceScore },
+                            { label: 'Accessibility', score: accessibilityScore },
+                            { label: 'Best Practices', score: bestPracticesScore },
+                            { label: 'SEO', score: seoScore },
+                        ].map((item) => {
+                            const ringClass = item.score >= 90 ? 'psi-good' : item.score >= 50 ? 'psi-warning' : 'psi-danger';
+                            return `
+                                <div class="lh-audit-card">
+                                    <div class="lh-mini-ring" style="--score:${item.score};--ring-color:${ringClass === 'psi-good' ? '#0cce6b' : ringClass === 'psi-warning' ? '#ffa400' : '#ea4335'};">
+                                        <span>${item.score}</span>
+                                    </div>
+                                    <div class="lh-mini-label">${item.label}</div>
+                                </div>
+                            `;
+                        }).join('')}
+                    </div>
+
+                    <div class="lh-section-title">Accessibility</div>
+                    <div class="lh-report-shell" style="box-shadow:none; border-radius: 8px; padding: 18px 16px; background:#fff; border:1px solid #e0e0e0;">
+                        <div class="text-center mb-4">
+                            <div class="d-flex justify-content-center mb-3">
+                                <div class="lh-ring" style="--score:${accessibilityScore};--ring-color:${accessibilityScore >= 90 ? '#0cce6b' : accessibilityScore >= 50 ? '#ffa400' : '#ea4335'}; width: 118px; height: 118px;">
+                                    <span class="lh-ring-value" style="color:${accessibilityScore >= 90 ? '#0cce6b' : accessibilityScore >= 50 ? '#ffa400' : '#ea4335'};">${accessibilityScore}</span>
+                                </div>
+                            </div>
+                            <div class="h3 mb-2">Accessibility</div>
+                            <div class="lh-copy-block" style="max-width: 560px;">
+                                These checks highlight opportunities to improve the accessibility of your web app. Automatic detection can only detect a subset of issues and does not guarantee the accessibility of your web app, so manual testing is also encouraged.
+                            </div>
+                        </div>
+                        <div class="lh-section-title" style="margin-top: 0;">Accessibility Checks</div>
+                        <div class="lh-audit-list">
+                            ${accessibilityAudits.length ? accessibilityAudits.map((item) => renderAuditBullet(item.title, item.status || 'pass', 'This check passed in the current analysis.')).join('') : [
+                                renderAuditBullet('Page has valid lang attribute', 'pass', 'This check passed in the current analysis.'),
+                                renderAuditBullet('Buttons have accessible names', 'pass', 'This check passed in the current analysis.'),
+                                renderAuditBullet('Images have alt text', 'warn', 'This item may need manual review.')
+                            ].join('')}
+                        </div>
+                    </div>
+
+                    <div class="lh-section-title">Best Practices</div>
+                    <div class="lh-report-shell" style="box-shadow:none; border-radius: 8px; padding: 18px 16px; background:#fff; border:1px solid #e0e0e0;">
+                        <div class="text-center mb-4">
+                            <div class="d-flex justify-content-center mb-3">
+                                <div class="lh-ring" style="--score:${bestPracticesScore};--ring-color:${bestPracticesScore >= 90 ? '#0cce6b' : bestPracticesScore >= 50 ? '#ffa400' : '#ea4335'}; width: 118px; height: 118px;">
+                                    <span class="lh-ring-value" style="color:${bestPracticesScore >= 90 ? '#0cce6b' : bestPracticesScore >= 50 ? '#ffa400' : '#ea4335'};">${bestPracticesScore}</span>
+                                </div>
+                            </div>
+                            <div class="h3 mb-2">Best Practices</div>
+                            <div class="lh-copy-block" style="max-width: 560px;">
+                                These checks ensure your page follows common web platform best practices. Some issues are detected automatically, while others require a manual review of the page and its dependencies.
+                            </div>
+                        </div>
+                        <div class="lh-section-title" style="margin-top: 0;">Best Practice Checks</div>
+                        <div class="lh-audit-list">
+                            ${bestPracticeAudits.length ? bestPracticeAudits.map((item) => renderAuditBullet(item.title, item.status || 'pass', 'This check passed in the current analysis.')).join('') : [
+                                renderAuditBullet('[user-scalable="no"] is used in the <meta name="viewport"> element or the [maximum-scale] attribute is less than 5.', 'warn', 'This can make zooming and readability harder on mobile devices.'),
+                                renderAuditBullet('Document does not have a main landmark.', 'warn', 'Add a main landmark to improve page structure for assistive technology.'),
+                                renderAuditBullet('Identical links have the same purpose.', 'pass', 'This check passed in the current analysis.')
+                            ].join('')}
+                        </div>
+                    </div>
+
+                    <div class="lh-section-title">Performance</div>
+                    <div class="lh-report-shell" style="box-shadow:none; border-radius: 8px; padding: 18px 16px; background:#fff; border:1px solid #e0e0e0;">
+                        <div class="lh-score-badge-row" style="margin-bottom: 8px;">
+                            ${[
+                                { label: 'Performance', score: performanceScore },
+                                { label: 'Accessibility', score: accessibilityScore },
+                                { label: 'Best Practices', score: bestPracticesScore },
+                                { label: 'SEO', score: seoScore },
+                            ].map((item) => {
+                                const ringClass = item.score >= 90 ? 'psi-good' : item.score >= 50 ? 'psi-warning' : 'psi-danger';
+                                return `<div class="lh-ring-stack"><div class="lh-ring" style="--score:${item.score};--ring-color:${ringClass === 'psi-good' ? '#0cce6b' : ringClass === 'psi-warning' ? '#ffa400' : '#ea4335'};"><span class="lh-ring-value">${item.score}</span></div><div class="lh-ring-caption">${item.label}</div></div>`;
+                            }).join('')}
+                        </div>
+                        <div class="lh-main-ring-wrap">
+                            <div>
+                                <div class="lh-main-ring" style="--score:${performanceScore};--ring-color:${performanceScore >= 90 ? '#0cce6b' : performanceScore >= 50 ? '#ffa400' : '#ea4335'};"><div class="lh-main-ring-value">${performanceScore}</div></div>
+                                <div class="lh-main-ring-label">Performance</div>
+                            </div>
+                        </div>
+                        <div class="lh-copy-block">
+                            Values are estimated and may vary. The <a href="#">performance score is calculated directly from these metrics</a>. <a href="#">See calculator.</a>
+                        </div>
+                        <div class="lh-section-title" style="margin-top: 20px;">Performance Audits</div>
+                        <div class="lh-audit-list">
+                            ${performanceAudits.length ? performanceAudits.map((item) => renderAuditBullet(item.title, item.impact === 'High' ? 'warn' : 'pass', item.description)).join('') : [
+                                renderAuditBullet('Reduce JavaScript execution time', 'warn', 'Reduce the time spent parsing, compiling, and executing JS.'),
+                                renderAuditBullet('Eliminate render-blocking resources', 'warn', 'Resources are blocking the first paint of your page.'),
+                                renderAuditBullet('Minify JavaScript', 'pass', 'Minifying JavaScript files can reduce payload sizes.')
+                            ].join('')}
+                        </div>
+                        <div class="lh-section-title">Capture Sequence</div>
+                        <div style="display:grid;grid-template-columns:repeat(7,minmax(0,1fr));gap:10px;align-items:end;overflow:auto;padding-bottom:6px;">
+                            ${Array.from({ length: 7 }).map((_, index) => `
+                                <div style="text-align:center;min-width:84px;">
+                                    <div style="height: 190px; border:1px solid #e0e0e0; border-radius:6px; background:#fff; display:flex; align-items:center; justify-content:center; overflow:hidden;">
+                                        <img alt="Capture ${index + 1}" src="${performancePreview}" style="width:100%;height:100%;object-fit:cover;opacity:${index === 0 ? '0.05' : '1'};">
+                                    </div>
+                                </div>
+                            `).join('')}
+                        </div>
+                    </div>
+
+                    <div class="lh-section-title">Crawling and Indexing</div>
+                    <div class="lh-audit-list">
+                        <div class="lh-audit-list-head">Links are not crawlable</div>
+                        <div class="d-flex align-items-start gap-3 p-3">
+                            <div class="psi-danger" style="font-size: 1.1rem; line-height: 1;"><i class="fas fa-exclamation-triangle"></i></div>
+                            <div>
+                                <div class="lh-subtitle">To appear in search results, crawlers need access to your app.</div>
+                            </div>
                         </div>
                     </div>
                 </div>
             </div>
         `;
 
-        document.getElementById('domainResultsSection').classList.remove('d-none');
+        section.classList.remove('d-none');
     }
 
     function renderDomainCharts(data) {

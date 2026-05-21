@@ -27,14 +27,14 @@ function initializeSidebar() {
     
     if (toggleBtn) {
         toggleBtn.addEventListener('click', function() {
-            sidebar.classList.toggle('open');
+            if (sidebar) sidebar.classList.toggle('open');
         });
     }
     
     // Close sidebar on outside click (mobile)
     document.addEventListener('click', function(e) {
         if (window.innerWidth < 992) {
-            if (!sidebar.contains(e.target) && !toggleBtn?.contains(e.target)) {
+            if (sidebar && !sidebar.contains(e.target) && !toggleBtn?.contains(e.target)) {
                 sidebar.classList.remove('open');
             }
         }
