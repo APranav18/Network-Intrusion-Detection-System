@@ -680,15 +680,29 @@
     }
 
     .psi-page-shell {
-        background: #ffffff;
+        background: linear-gradient(135deg, rgba(30, 144, 255, 0.02), rgba(255, 68, 68, 0.01));
         border-radius: 1rem;
         padding: 1rem 1.15rem 1.25rem;
-        box-shadow: 0 0.25rem 1.2rem rgba(15, 23, 42, 0.06);
-        border: 1px solid #e9ecef;
+        box-shadow: 0 0 40px rgba(30, 144, 255, 0.15);
+        border: 2px solid rgba(30, 144, 255, 0.2);
+        position: relative;
+        overflow: hidden;
+    }
+    
+    .psi-page-shell::before {
+        content: '';
+        position: absolute;
+        top: 0;
+        left: 0;
+        right: 0;
+        height: 3px;
+        background: linear-gradient(90deg, #1e90ff, #ff4444, #1e90ff);
+        background-size: 200% 100%;
+        animation: shimmerMove 4s ease-in-out infinite;
     }
 
     .psi-page-header {
-        border-bottom: 1px solid #e9ecef;
+        border-bottom: 2px solid rgba(30, 144, 255, 0.3);
         padding-bottom: 0.9rem;
         margin-bottom: 1rem;
     }
@@ -700,7 +714,7 @@
         display: inline-flex;
         align-items: center;
         justify-content: center;
-        background: linear-gradient(135deg, #0066cc, #0052a3);
+        background: linear-gradient(135deg, #1e90ff, #ff4444);
         color: #fff;
         font-size: 0.95rem;
     }
@@ -738,23 +752,32 @@
 
     .psi-domain-input {
         max-width: 760px;
-        border-color: #dadce0;
+        border-color: rgba(30, 144, 255, 0.5);
         border-radius: 0.5rem;
-        box-shadow: inset 0 1px 2px rgba(0, 0, 0, 0.02);
+        box-shadow: 0 0 20px rgba(30, 144, 255, 0.1);
+        background: rgba(30, 144, 255, 0.02);
+        transition: all 0.3s ease;
+    }
+    
+    .psi-domain-input:focus {
+        border-color: #1e90ff;
+        box-shadow: 0 0 40px rgba(30, 144, 255, 0.3);
     }
 
     .psi-analyze-btn {
         min-width: 92px;
         border-radius: 0.45rem;
         box-shadow: none;
-        background-color: #0066cc;
-        border-color: #0066cc;
+        background: linear-gradient(135deg, #1e90ff, #ff4444);
+        border-color: transparent;
         color: #ffffff;
+        font-weight: 600;
     }
     
     .psi-analyze-btn:hover {
-        background-color: #0052a3;
-        border-color: #0052a3;
+        background: linear-gradient(135deg, #ff4444, #1e90ff);
+        border-color: transparent;
+        transform: scale(1.02);
     }
 
     .psi-device-toggle {
@@ -777,8 +800,12 @@
     }
 
     .psi-device-option.active {
-        color: #0066cc;
-        border-bottom-color: #0066cc;
+        background: linear-gradient(135deg, #1e90ff, #ff4444);
+        -webkit-background-clip: text;
+        -webkit-text-fill-color: transparent;
+        background-clip: text;
+        border-bottom: 3px solid #1e90ff;
+        font-weight: 700;
     }
 
     .psi-device-option i {
@@ -819,16 +846,19 @@
 
     .psi-results-title {
         font-size: 1.15rem;
-        font-weight: 500;
-        color: #000000;
+        font-weight: 600;
+        background: linear-gradient(135deg, #1e90ff, #ff4444);
+        -webkit-background-clip: text;
+        -webkit-text-fill-color: transparent;
+        background-clip: text;
     }
 
     .psi-origin-toggle {
         display: inline-flex;
-        border: 2px solid #0066cc;
+        border: 2px solid #1e90ff;
         border-radius: 0.45rem;
         overflow: hidden;
-        background: #f0f6ff;
+        background: rgba(30, 144, 255, 0.1);
     }
 
     .psi-origin-toggle button {
@@ -837,19 +867,21 @@
         padding: 0.35rem 0.65rem;
         font-size: 0.85rem;
         color: #1a1a1a;
+        transition: all 0.3s ease;
     }
 
     .psi-origin-toggle button.active {
-        background: #0066cc;
+        background: linear-gradient(135deg, #1e90ff, #ff4444);
         color: #ffffff;
         font-weight: 600;
     }
 
     .psi-results-card {
-        background: #ffffff;
-        border: 1px solid #e0e3e7;
+        background: rgba(30, 144, 255, 0.02);
+        border: 2px solid rgba(30, 144, 255, 0.2);
         border-radius: 0.9rem;
         padding: 1.2rem;
+        box-shadow: 0 10px 40px rgba(30, 144, 255, 0.1);
     }
 
     .psi-summary-strip {
@@ -859,10 +891,10 @@
     }
 
     .psi-summary-item {
-        border: 1px solid #e0e3e7;
+        border: 2px solid rgba(30, 144, 255, 0.3);
         border-radius: 0.8rem;
         padding: 0.8rem 0.9rem;
-        background: linear-gradient(180deg, #ffffff, #f8f9fa);
+        background: linear-gradient(180deg, rgba(30, 144, 255, 0.05), rgba(255, 68, 68, 0.02));
     }
 
     .psi-summary-label {
@@ -871,12 +903,17 @@
         text-transform: uppercase;
         letter-spacing: 0.04em;
         margin-bottom: 0.25rem;
+        font-weight: 600;
     }
 
     .psi-summary-value {
         font-size: 1.4rem;
         font-weight: 700;
         line-height: 1.1;
+        background: linear-gradient(135deg, #1e90ff, #ff4444);
+        -webkit-background-clip: text;
+        -webkit-text-fill-color: transparent;
+        background-clip: text;
     }
 
     .psi-mini-summary {
@@ -886,10 +923,10 @@
     }
 
     .psi-mini-summary-item {
-        border: 1px solid #e0e3e7;
+        border: 2px solid rgba(30, 144, 255, 0.2);
         border-radius: 0.7rem;
         padding: 0.55rem 0.7rem;
-        background: #ffffff;
+        background: linear-gradient(135deg, rgba(30, 144, 255, 0.05), rgba(255, 68, 68, 0.02));
     }
 
     .psi-mini-summary-label {
@@ -904,7 +941,10 @@
         font-size: 1.05rem;
         font-weight: 700;
         line-height: 1.1;
-        color: #000000;
+        background: linear-gradient(135deg, #1e90ff, #ff4444);
+        -webkit-background-clip: text;
+        -webkit-text-fill-color: transparent;
+        background-clip: text;
     }
 
     .psi-expand-view {
@@ -960,7 +1000,7 @@
         position: relative;
         height: 8px;
         border-radius: 999px;
-        background: linear-gradient(90deg, #28a745 0 68%, #fd7e14 68% 86%, #dc3545 86% 100%);
+        background: linear-gradient(90deg, #1e90ff 0%, #ff4444 100%);
         margin-top: 0.8rem;
         overflow: visible;
     }
@@ -978,20 +1018,20 @@
     }
 
     .psi-meter-marker.psi-good {
-        background: #198754;
+        background: #1e90ff;
     }
 
     .psi-meter-marker.psi-warning {
-        background: #fd7e14;
+        background: #ff9500;
     }
 
     .psi-meter-marker.psi-danger {
-        background: #dc3545;
+        background: #ff4444;
     }
 
-    .psi-good { color: #198754; }
-    .psi-warning { color: #fd7e14; }
-    .psi-danger { color: #dc3545; }
+    .psi-good { color: #1e90ff; }
+    .psi-warning { color: #ff9500; }
+    .psi-danger { color: #ff4444; }
 
     .psi-rating-pill {
         display: inline-block;
@@ -1003,23 +1043,26 @@
     }
 
     .psi-rating-pill.psi-good {
-        background: #d1e7dd;
+        background: rgba(30, 144, 255, 0.2);
+        color: #1e90ff;
     }
 
     .psi-rating-pill.psi-warning {
-        background: #ffe5d0;
+        background: rgba(255, 149, 0, 0.2);
+        color: #ff9500;
     }
 
     .psi-rating-pill.psi-danger {
-        background: #f8d7da;
+        background: rgba(255, 68, 68, 0.2);
+        color: #ff4444;
     }
 
     .domain-chart-card {
-        border: 1px solid #dee2e6;
+        border: 2px solid rgba(30, 144, 255, 0.2);
         border-radius: 0.5rem;
         padding: 0.75rem;
         height: 100%;
-        background: #ffffff;
+        background: linear-gradient(135deg, rgba(30, 144, 255, 0.05), rgba(255, 68, 68, 0.02));
     }
 
     .domain-chart-title {
@@ -1048,31 +1091,31 @@
         justify-content: center;
         font-weight: 700;
         font-size: 1.3rem;
-        color: #212529;
-        background: #f8f9fa;
-        border: 4px solid #dee2e6;
+        color: #1e90ff;
+        background: linear-gradient(135deg, rgba(30, 144, 255, 0.1), rgba(255, 68, 68, 0.05));
+        border: 4px solid #1e90ff;
     }
 
     .psi-score-circle.psi-good {
-        border-color: #20c997;
-        color: #198754;
+        border-color: #1e90ff;
+        color: #1e90ff;
     }
 
     .psi-score-circle.psi-warning {
-        border-color: #f59f00;
-        color: #fd7e14;
+        border-color: #ff9500;
+        color: #ff9500;
     }
 
     .psi-score-circle.psi-danger {
-        border-color: #ef4444;
-        color: #dc3545;
+        border-color: #ff4444;
+        color: #ff4444;
     }
 
     .psi-preview-card {
-        border: 1px solid #dee2e6;
+        border: 2px solid rgba(30, 144, 255, 0.2);
         border-radius: 0.5rem;
         padding: 0.6rem;
-        background: #f8f9fa;
+        background: rgba(30, 144, 255, 0.05);
         margin-bottom: 1rem;
     }
 
@@ -1086,11 +1129,11 @@
     }
 
     .psi-audit-list {
-        border: 1px solid #e9ecef;
+        border: 2px solid rgba(30, 144, 255, 0.15);
         border-radius: 0.5rem;
-        background: #fff;
-
-    /* Section accents for a clearer card hierarchy */
+        background: rgba(30, 144, 255, 0.03);
+        margin-bottom: 0.8rem;
+    }
     .row.mb-4 > .col-lg-12 > .card {
         border-color: rgba(34, 197, 94, 0.28);
         background: linear-gradient(135deg, rgba(15, 23, 42, 0.92), rgba(10, 17, 36, 0.98));
@@ -1158,12 +1201,12 @@
     #domain .col-lg-8 > .card,
     #domain .psi-page-shell,
     #domainResultsSection .domain-results-shell {
-        border-color: rgba(6, 182, 212, 0.3);
+        border-color: rgba(30, 144, 255, 0.3);
     }
 
     #domain .col-lg-8 > .card .card-header {
-        background: linear-gradient(135deg, rgba(6, 182, 212, 0.2), rgba(15, 23, 42, 0.98)) !important;
-        color: #cffafe !important;
+        background: linear-gradient(135deg, rgba(30, 144, 255, 0.2), rgba(15, 23, 42, 0.98)) !important;
+        color: #b3e5fc !important;
     }
 
     #domainResultsSection .domain-results-shell::before {
@@ -1269,8 +1312,8 @@
     .psi-audit-list .psi-audit-title {
         font-weight: 600;
         padding: 0.55rem 0.75rem;
-        border-bottom: 1px solid #e9ecef;
-        background: #f8f9fa;
+        border-bottom: 2px solid rgba(30, 144, 255, 0.2);
+        background: linear-gradient(135deg, rgba(30, 144, 255, 0.1), rgba(255, 68, 68, 0.05));
     }
 
     .psi-audit-list ul {
